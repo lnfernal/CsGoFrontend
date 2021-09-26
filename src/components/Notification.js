@@ -1,7 +1,7 @@
 import React from 'react'
-const Notification = ({active, setActive, status, message}) => {
+const Notification = ({status, message}) => {
     return (
-        <div className={status === 1 && active ? "notification _active error" : "notification _active success"}>
+        <div className={status === 1 ? "notification _active error" : "notification _active success"}>
             <div className="notification_heading">
                 Ошибка!
             </div>

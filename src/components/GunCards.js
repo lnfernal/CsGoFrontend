@@ -1,5 +1,4 @@
 import React from 'react'
-
 export const GunCards = ({skins}) => {
     const shops_name = [
         {name: 'Steam', href: 'https://steamcommunity.com/market/search?appid=730', color: '#316282'},
@@ -10,8 +9,9 @@ export const GunCards = ({skins}) => {
 
     console.log('skins', skins)
     if (!skins['skins'].length) {
-        return <p className="center">Скинов пока нет</p>
+        return <p className="center">Скинов по такому запросу не найдено.</p>
     }
+
     return (
         // Выводим скины
         skins['skins'].map((skin) => {
@@ -46,6 +46,7 @@ export const GunCards = ({skins}) => {
                                     <a style={{color: shops_name[skin.id_shop - 1]['color']}}
                                        className="shop_name"
                                        target="_blank"
+                                        rel="noreferrer noopener"
                                        href={shops_name[skin.id_shop - 1]['href']}
                                     >
                                         {shops_name[skin.id_shop - 1]['name']}
@@ -53,6 +54,7 @@ export const GunCards = ({skins}) => {
                                 </li>
                             </ul>
                         </div>
+
                     )
             }
         )

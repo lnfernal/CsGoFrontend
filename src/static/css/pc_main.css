@@ -316,7 +316,9 @@ input[type="number"]::-webkit-inner-spin-button {
     font-size: 22px;
     margin-bottom: 5px;
 }
-
+.fa-sign-out-alt{
+    cursor: pointer;
+}
 .currency-selector {
     width: 75px;
     height: 35px;
@@ -1081,7 +1083,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 .send_btn {
     width: 90%;
-    margin: 25px auto 50px auto;
+    margin: 25px auto 20px auto;
     display: flex;
     height: 40px;
     justify-content: center;
@@ -1105,7 +1107,30 @@ input[type=range]:focus::-ms-fill-upper {
     transition: transform .3s;
     transform: translate(0, 0);
 }
-
+.about_popup{
+    width: 90%;
+    display: block;
+    line-height: 140%;
+    color: #c5c5c5;
+    margin: 0 auto;
+    font-size: 16px;
+}
+.flex_add{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+}
+.flex_add .fa-search{
+    color: #1c9afa;
+}
+.flex_add .fa-compress-arrows-alt{
+    color: #1c9afa;
+}
+.about_info{
+    width: 90%;
+    padding-left: 15px;
+}
 /* Страница подписаться */
 .subscribe_item {
     width: 32%;

@@ -1,11 +1,14 @@
-import React, {useState, useEffect, useCallback} from 'react'
+import React, {useState, useEffect, useCallback, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import {Loader} from "../components/Loader"
 import {GunCards} from "../components/GunCards"
+import {LoaderSkins} from "../components/LoaderSkins"
+import {AuthContext} from "../context/AuthContext";
 
+let first_loaded = true;
 export const Index = () => {
     const elasticsearch = require('elasticsearch');
-    let first_loaded = true;
+
     const esClient = new elasticsearch.Client({host: 'http://localhost:3000/', log: 'error'});
 
     const [form, setForm] = useState({
@@ -13,7 +16,7 @@ export const Index = () => {
         id_shop: Number(0),
         quality: 0,
         cost_start: 50,
-        cost_end: 500,
+        cost_end: 1000000,
         sorted_type: 1,
         raritet: 0,
         guns: 0,
@@ -23,36 +26,23 @@ export const Index = () => {
         type: 0,
         category: 0
     })
+    const {token} = useContext(AuthContext)
     const {request, loading} = useHttp()
     const [skins, setSkins] = useState(null)
     const changeHandler = event => {
         setForm({...form, [event.target.name]: event.target.value})
         getSkins()
     }
-    const changePage = () => {
-        setForm({...form, page: form.page})
-        getSkins()
-    }
-
-
-    const getSkins = async () => {
+    const changePage = async () => {
         try {
-            const data = await request('/api/skins/get', 'POST', {...form})
-            setSkins(data)
+            setForm({...form, page: form.page})
             first_loaded = false
-            console.log(first_loaded)
-            console.log(data)
-            window.addEventListener('scroll', function () {
-                let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
-                // если пользователь прокрутил достаточно далеко (< 100px до конца)
-                if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
-                    form.page += 1
-                    changePage()
-                }
-            });
+            await getSkins()
+            document.body.style.overflowY = 'auto';
         } catch (e) {
         }
     }
+
 
     const maxPrice = useCallback(async () => {
         try {
@@ -80,14 +70,34 @@ export const Index = () => {
                 form.cost_start = Number(cost_start.value)
                 cost.setAttribute('min', Number(cost_start.value))
             }
-            cost.setAttribute('min', data['min_price'][0]['price'])
-            form.cost_start = data['min_price'][0]['price']
+            cost.setAttribute('min', data['min_price'][0]['price'].toFixed(2))
+            form.cost_start = data['min_price'][0]['price'].toFixed(2)
             console.log(data)
         } catch (e) {
         }
     }, [request])
 
-
+    const getSkins = async () => {
+        try {
+            console.log('form.cost_end', form.cost_end)
+            const data = await request('/api/skins/get', 'POST', {...form}, {
+                Authorization: `Bearer ${token}`
+            })
+            setSkins(data)
+            console.log(first_loaded)
+            console.log(data)
+            window.addEventListener('scroll', function () {
+                let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
+                // если пользователь прокрутил достаточно далеко (< 100px до конца)
+                if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
+                    document.body.style.overflowY = 'hidden';
+                    form.page += 1
+                    return changePage()
+                }
+            });
+        } catch (e) {
+        }
+    }
     const minFloat = useCallback(async () => {
         try {
             const data = await request('/api/skins/get_min_float', 'GET', null)
@@ -106,11 +116,6 @@ export const Index = () => {
         }
     }, [request])
 
-
-    useEffect(() => {
-        getSkins()
-    }, [])
-
     useEffect(() => {
         maxPrice()
     }, [maxPrice])
@@ -119,6 +124,12 @@ export const Index = () => {
         minPrice()
     }, [minPrice])
 
+
+    useEffect(() => {
+        getSkins()
+    }, [])
+
+
     useEffect(() => {
         minFloat()
     }, [minFloat])
@@ -126,7 +137,6 @@ export const Index = () => {
     useEffect(() => {
         maxFloat()
     }, [maxFloat])
-
 
     if (loading && first_loaded) {
         return <Loader/>
@@ -146,7 +156,7 @@ export const Index = () => {
                         name='cost_end'
                         id="cost"
                         value={Number(form.cost_end)}
-                        onChange={changeHandler}
+                        onMouseUp={changeHandler}
                     />
 
                     <div className="place_for_price_inp">
@@ -293,7 +303,6 @@ export const Index = () => {
                     </select>
                 </sidebar>
                 <div className="card_guns_place">
-                    <h2>Товары</h2>
                     <div className="main_search_place">
                         <div className="flex_search_place ">
                             <input type="text" id="inp_search" placeholder="Поиск по названию"
@@ -314,6 +323,7 @@ export const Index = () => {
                             По стикерам
                         </div>
                     </div>
+                    {loading && skins && !first_loaded && <LoaderSkins/>}
                     {!loading && skins && <GunCards skins={skins}/>}
                 </div>
             </div>

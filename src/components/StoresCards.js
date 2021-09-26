@@ -2,7 +2,7 @@ import React from 'react'
 
 export const StoresCards = ({shops}) => {
     if (!shops.length) {
-        return <p className="center">Скинов пока нет</p>
+        return <p className="center">Нет информации о магазинах</p>
     }
     return (
         shops.map((shop) => {
@@ -11,6 +11,7 @@ export const StoresCards = ({shops}) => {
                         <div className="card_img_place">
                             <img
                                 src={shop.img}
+                                alt={shop.name}
                                 className="card_img"
                             />
                         </div>
