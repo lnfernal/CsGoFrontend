@@ -74,7 +74,7 @@ export const Utilites = () => {
                             </div>
                         </div>
 
-                        <div className="country-selector">s
+                        <div className="country-selector">
                             <span className="fas fa-ruble-sign">
                         </span> RUB
                             <div className="country-selector-list">

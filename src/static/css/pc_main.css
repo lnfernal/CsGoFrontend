@@ -523,7 +523,8 @@ input[type="number"]::-webkit-inner-spin-button {
     width: 100%;
     display: flex;
     align-items: center;
-    margin: 15px 0;
+    margin: 25px 0;
+    box-shadow: 4px 4px 4px #242424FF, 4px 4px 4px #363535FF;
 }
 
 .sorting_item {
@@ -536,11 +537,25 @@ input[type="number"]::-webkit-inner-spin-button {
     border-top: 1px solid #4daef8;
     border-left: 1px solid #4daef8;
     border-bottom: 1px solid #4daef8;
-    font-weight: 500;
-
+    font-weight: bold;
+    border-radius: 4px;
+    transition: all .3s;
 }
-
-
+.sorting_item:last-child{
+    border: 1px solid #4daef8;
+}
+.sorting_item._active_sorted{
+    background: #1c9afa;
+    color: #ffffff;
+    transition: all .3s;
+}
+.sorting_item .fa-chevron-down{
+    transition: tranform .6s;
+}
+.sorting_item .fa-chevron-down._active_chevron{
+    transition: transform .6s;
+    transform: rotate(180deg);
+}
 #sort_zag {
     font-size: 18px;
     font-weight: 600;
@@ -642,7 +657,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .filter_input:focus {
     outline: none;
-    border: 2px solid #1c9afa88;
+    border: 2px solid #1c9afa;
     transition: border .3s;
 }
 
@@ -1097,15 +1112,18 @@ input[type=range]:focus::-ms-fill-upper {
 
 .label_for_inp {
     position: absolute;
-    font-size: 18px;
-    transform: translate(0, -120%);
-    transition: transform .3s;
-    color: #1c9afa;
+    left: 5%;
+    font-size: 16px;
+    transform: translate(0, 120%);
+    transition: all .5s;
+    color: #c5c5c5;
+    margin: 8px 0;
 }
 
 .label_for_inp._active {
-    transition: transform .3s;
-    transform: translate(0, 0);
+    transition: all .5s;
+    transform: translate(0, -35%);
+    font-weight: bold;
 }
 .about_popup{
     width: 90%;

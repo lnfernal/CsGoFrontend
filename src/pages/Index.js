@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useContext} from 'react'
+import React, {useState, useEffect, useCallback, useContext, useMemo} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import {Loader} from "../components/Loader"
 import {GunCards} from "../components/GunCards"
@@ -26,22 +26,41 @@ export const Index = () => {
         type: 0,
         category: 0
     })
-    const {token} = useContext(AuthContext)
+    const {token, userSubscribe} = useContext(AuthContext)
+    const isAuthenticated = !!token
     const {request, loading} = useHttp()
     const [skins, setSkins] = useState(null)
     const changeHandler = event => {
         setForm({...form, [event.target.name]: event.target.value})
-        getSkins()
     }
-    const changePage = async () => {
-        try {
-            setForm({...form, page: form.page})
-            first_loaded = false
-            await getSkins()
-            document.body.style.overflowY = 'auto';
-        } catch (e) {
+
+    // Сортировка
+    let sorted_inputs = document.getElementsByClassName("sorting_item")
+    for (let i = 0; i < sorted_inputs.length; i++) {
+        sorted_inputs[i].onclick = function () {
+            document.getElementsByClassName("_active_sorted")[0].classList.remove("_active_sorted")
+            sorted_inputs[i].classList.add("_active_sorted")
+            if (i === 0) {
+                let chevron = document.getElementById("chevron_down")
+                if (chevron.classList.contains("_active_chevron")) {
+                    chevron.classList.remove("_active_chevron");
+                } else {
+                    chevron.classList.add("_active_chevron");
+                }
+
+            }
         }
     }
+    console.log("token", token, userSubscribe)
+
+
+    window.addEventListener('scroll', function () {
+        let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
+        // если пользователь прокрутил достаточно далеко (< 100px до конца)
+        if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
+            form.page += 1
+        }
+    });
 
 
     const maxPrice = useCallback(async () => {
@@ -50,13 +69,15 @@ export const Index = () => {
             let cost = document.getElementById('cost')
             let cost_end = document.getElementById('cost_end')
             cost.oninput = function () {
-                form.cost_end = Number(cost.value)
+                form.cost_end = Number(cost_end.value)
             }
             cost_end.onchange = function () {
                 form.cost_end = Number(cost_end.value)
             }
             cost.setAttribute('max', data['max_price'][0]['price'].toFixed(2))
-            form.cost_end = data['max_price'][0]['price'].toFixed(2)
+            console.log('isAuthenticated', isAuthenticated);
+            if(!isAuthenticated) return setForm({...form, cost_end : 500})
+            return form.cost_end = data['max_price'][0]['price'].toFixed(2)
         } catch (e) {
         }
     }, [request])
@@ -64,15 +85,15 @@ export const Index = () => {
     const minPrice = useCallback(async () => {
         try {
             const data = await request('/api/skins/get_min_price', 'GET', null)
+            console.log(data)
             let cost = document.getElementById('cost')
             let cost_start = document.getElementById('cost_start')
             cost_start.onchange = function () {
                 form.cost_start = Number(cost_start.value)
-                cost.setAttribute('min', Number(cost_start.value))
             }
             cost.setAttribute('min', data['min_price'][0]['price'].toFixed(2))
-            form.cost_start = data['min_price'][0]['price'].toFixed(2)
-            console.log(data)
+            return form.cost_start = data['min_price'][0]['price'].toFixed(2)
+
         } catch (e) {
         }
     }, [request])
@@ -86,15 +107,7 @@ export const Index = () => {
             setSkins(data)
             console.log(first_loaded)
             console.log(data)
-            window.addEventListener('scroll', function () {
-                let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
-                // если пользователь прокрутил достаточно далеко (< 100px до конца)
-                if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
-                    document.body.style.overflowY = 'hidden';
-                    form.page += 1
-                    return changePage()
-                }
-            });
+
         } catch (e) {
         }
     }
@@ -124,10 +137,10 @@ export const Index = () => {
         minPrice()
     }, [minPrice])
 
-
+    // При фильтрации и сортировке
     useEffect(() => {
         getSkins()
-    }, [])
+    }, [form])
 
 
     useEffect(() => {
@@ -144,9 +157,9 @@ export const Index = () => {
 
     return (
         <div className="container">
-            <div className="about_me_place">
-                <h2>Интересное</h2>
-            </div>
+            {/*<div className="about_me_place">*/}
+            {/*    <h2>Интересное</h2>*/}
+            {/*</div>*/}
             <div className="flex_content">
                 <sidebar className="filters_place">
                     <h2>Фильтры</h2>
@@ -310,14 +323,17 @@ export const Index = () => {
                         </div>
                     </div>
                     <div className="sorting_place">
-                        <div className="sorting_item">
-                            По цене
+                        <div className="sorting_item _active_sorted">
+                            По цене <span className="fa fa-chevron-down" id="chevron_down">
+                        </span>
                         </div>
                         <div className="sorting_item">
-                            По количеству
+                            По выгоде
                         </div>
                         <div className="sorting_item">
-                            По float
+                            По float <span className="fa fa-chevron-down" id="chevron_float">
+
+                        </span>
                         </div>
                         <div className="sorting_item">
                             По стикерам

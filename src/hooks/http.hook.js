@@ -13,10 +13,7 @@ export const useHttp = () => {
       }
       console.log(url, method, body)
       const response = await fetch(url, {method, body, headers})
-       console.log('huetahooks', response);
       const data = await response.json()
-       console.log('huetahooks', data);
-
       if (!response.ok) {
         throw new Error(data.message || 'Что-то пошло не так')
       }

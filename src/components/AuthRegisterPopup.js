@@ -3,9 +3,14 @@ import React, {useState, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import Notification from "../components/Notification";
 import {AuthContext} from '../context/AuthContext'
+
+
 const Popup = ({active, setActive, page, setPage}) => {
-    const {request} = useHttp()
+    const {request, loading} = useHttp()
     const auth = useContext(AuthContext)
+    let [popupActive, setPopupActive] = useState(false)
+    let [message, setMessage] = useState('')
+    let [status, setStatus] = useState(0)
     const [form, setForm] = useState({
         email: '',
         password: ''
@@ -16,13 +21,23 @@ const Popup = ({active, setActive, page, setPage}) => {
         rep_password: ''
     })
 
-    let inputs = document.getElementsByTagName('input');
+    let inputs = document.getElementsByClassName('auth_reg_input');
+    let labels = document.getElementsByClassName('label_for_inp');
+
     for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value !== '') {
+            labels[i].classList.add('_active');
+            labels[i].innerText = inputs[i].getAttribute('placeholder');
+        }
         inputs[i].onfocus = function () {
-            // let labels = document.getElementsByClassName('label_for_inp');
-            // labels[i].classList.add('active');
-            // labels[i].innerText = inputs[i].getAttribute('placeholder');
-            console.log('Всё окей!');
+            labels[i].classList.add('_active');
+            labels[i].innerText = inputs[i].getAttribute('placeholder');
+        }
+        inputs[i].onchange = function () {
+            if (inputs[i].value === '') {
+                labels[i].classList.remove('_active')
+                labels[i].innerText = "";
+            }
         }
     }
 
@@ -40,14 +55,17 @@ const Popup = ({active, setActive, page, setPage}) => {
         }
         try {
             const data = await request('/api/user/registration', 'POST', {...form_reg})
+            console.log("data_reg", data)
             if (data['status'] === 'ok') {
                 document.body.style.overflow = "auto"
                 setActive(false)
-                    return <Notification status={1}
-                                  message={data['message']}/>
-
-
+                setStatus(2)
+            } else {
+                setStatus(1)
             }
+            setMessage(data['message'])
+            setPopupActive(true)
+            console.log("popupActive", popupActive)
         } catch (e) {
         }
     }
@@ -56,17 +74,20 @@ const Popup = ({active, setActive, page, setPage}) => {
         try {
             const data = await request('/api/user/auth', 'POST', {...form})
             console.log(data)
-            auth.login(data.token, data.userId)
             if (data['status'] === 'ok') {
                 document.body.style.overflow = "auto"
                 setActive(false)
-
+                setStatus(2)
+                auth.login(data.token, data.userId, data.userSubscribe)
+            } else {
+                setStatus(1)
             }
+            setMessage(data['message'])
+            return setPopupActive(true)
         } catch (e) {
         }
     }
     if (active) document.body.style.overflow = "hidden"
-
     return (
         <div className={active ? 'popup_place _active' : 'popup_place'} onClick={() => {
             setActive(false)
@@ -121,26 +142,28 @@ const Popup = ({active, setActive, page, setPage}) => {
 
                     </div>
                     <input
-                        className='filter_input'
+                        className='filter_input auth_reg_input'
                         name='email'
                         type='email'
                         value={form.email}
                         placeholder='Введите Email'
                         onChange={changeHandler}
+                        autoComplete="off"
                     />
                     <div className="label_for_inp">
 
                     </div>
                     <input
-                        className='filter_input'
+                        className='filter_input auth_reg_input'
                         name='password'
                         type='password'
                         value={form.password}
                         placeholder='Введите пароль'
                         onChange={changeHandler}
+                        autoComplete="off"
                     />
 
-                    <div className="send_btn" onClick={loginHandler}>Войти в аккаунт</div>
+                    <button className="send_btn" onClick={loginHandler} disabled={loading}>Войти в аккаунт</button>
 
                     <div className="auth_registr_text">
                         Нет аккаунта?
@@ -171,7 +194,7 @@ const Popup = ({active, setActive, page, setPage}) => {
 
                     </div>
                     <input
-                        className='filter_input'
+                        className='filter_input auth_reg_input'
                         name='email'
                         type='email'
                         value={form_reg.email}
@@ -182,7 +205,7 @@ const Popup = ({active, setActive, page, setPage}) => {
 
                     </div>
                     <input
-                        className='filter_input'
+                        className='filter_input auth_reg_input'
                         name='password'
                         type='password'
                         value={form_reg.password}
@@ -193,14 +216,15 @@ const Popup = ({active, setActive, page, setPage}) => {
 
                     </div>
                     <input
-                        className='filter_input'
+                        className='filter_input auth_reg_input'
                         name='rep_password'
                         type='password'
                         value={form_reg.rep_password}
                         placeholder='Повторите пароль'
                         onChange={changeHandler_reg}
                     />
-                    <div className="send_btn" onClick={registerHandler}>Зарегистрироваться</div>
+                    <button className="send_btn" onClick={registerHandler} disabled={loading}>Зарегистрироваться
+                    </button>
 
                     <div className="auth_registr_text">
                         Уже есть аккаунт?
@@ -213,6 +237,7 @@ const Popup = ({active, setActive, page, setPage}) => {
                     </div>
                 </div>
             </div>
+            { popupActive && <Notification setActive={setPopupActive} active={popupActive} status={status} message={message}/>}
         </div>
     )
 }

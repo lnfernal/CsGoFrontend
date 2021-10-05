@@ -6,13 +6,13 @@ export const useAuth = () => {
     const [token, setToken] = useState(null)
     const [ready, setReady] = useState(false)
     const [userId, setUserId] = useState(null)
-
-    const login = useCallback((jwtToken, id) => {
+    const [subscriber, setSubscribe] = useState(null)
+    const login = useCallback((jwtToken, id, subscribe) => {
         setToken(jwtToken)
         setUserId(id)
-
+        setSubscribe(subscribe)
         localStorage.setItem(storageName, JSON.stringify({
-            userId: id, token: jwtToken
+            userId: id, token: jwtToken, userSubscribe: subscribe
         }))
     }, [])
 
@@ -20,6 +20,7 @@ export const useAuth = () => {
     const logout = useCallback(() => {
         setToken(null)
         setUserId(null)
+        setSubscribe(null)
         localStorage.removeItem(storageName)
     }, [])
 
@@ -27,11 +28,11 @@ export const useAuth = () => {
         const data = JSON.parse(localStorage.getItem(storageName))
         console.log('data_hook', data)
         if (data && data.token) {
-            login(data.token, data.userId)
+            login(data.token, data.userId, data.subscribe)
         }
         setReady(true)
     }, [login])
 
 
-    return {login, logout, token, userId, ready}
+    return {login, logout, token, userId, ready, subscriber}
 }

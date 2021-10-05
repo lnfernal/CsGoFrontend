@@ -17,8 +17,8 @@ export const GunCards = ({skins}) => {
         skins['skins'].map((skin) => {
                     return (
                         <div className="gun_card" key={skin._id}>
-                            <div className="price_difference">
-                                -30%
+                            <div className="price_difference" style={skin.price_difference === 0 ? {display: "none"} : {display: "block"}}>
+                                {skin.price_difference}
                             </div>
                             <div className="price_gun">
                                 {skin.price.toFixed(2)} ₽
@@ -34,11 +34,9 @@ export const GunCards = ({skins}) => {
                                     <span className="name_gun">{skin.name}</span>
                                 </li>
                                 <li>
-
                                     <span className="quality_gun">{skin.quality}</span>
                                 </li>
                                 <li>
-
                                     <span className="raritet_gun">{skin.item_type}</span>
                                 </li>
 
