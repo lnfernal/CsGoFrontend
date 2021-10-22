@@ -114,25 +114,33 @@ input[type="number"]::-webkit-inner-spin-button {
     box-shadow: none;
 }
 
+
 .preloader_text {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
+    background: #1c9afa;
+    width: 10px;
+    height: 10px;
+    animation: radial-pulse 0.8s infinite;
+    margin-left: 30px;
 }
+
+@keyframes radial-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(28, 154, 250, 100);
+        border-radius: 50%;
+    }
+
+    100% {
+        box-shadow: 0 0 0 10px rgba(28, 154, 250, 100);
+        border-radius: 50%;
+    }
+}
+
 
 .lds-roller {
     display: inline-block;
-    width: 80px;
-    height: 80px;
-    margin-left: 30px;
+    width: 25px;
+    height: 25px;
+    margin: 15px 0 0 30px;
 
 }
 
@@ -316,9 +324,11 @@ input[type="number"]::-webkit-inner-spin-button {
     font-size: 22px;
     margin-bottom: 5px;
 }
-.fa-sign-out-alt{
+
+.fa-sign-out-alt {
     cursor: pointer;
 }
+
 .currency-selector {
     width: 75px;
     height: 35px;
@@ -405,11 +415,13 @@ input[type="number"]::-webkit-inner-spin-button {
     box-shadow: 0 6px 18px #3e3e3e;
     border-radius: 10px;
 }
-.logo{
-    font-size:28px;
+
+.logo {
+    font-size: 28px;
     color: #c5c5c5;
     font-weight: bold;
 }
+
 .logo_stores {
     width: 100%;
     height: 100%;
@@ -464,7 +476,7 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0 0 0 2%;
     box-shadow: 5px 5px 10px #111;
     background: #222;
-    padding: 10px;
+    padding: 10px 10px 40px 10px;
 }
 
 .about_me_place {
@@ -508,13 +520,16 @@ input[type="number"]::-webkit-inner-spin-button {
     height: 25px;
     width: 100%;
 }
-.search_input.filter_input{
+
+.search_input.filter_input {
     border: 0;
     border-radius: 0;
 }
-.search_input.filter_input:focus{
+
+.search_input.filter_input:focus {
     border: 0;
 }
+
 .search_input[placeholder] {
     font-size: 18px;
 }
@@ -541,21 +556,26 @@ input[type="number"]::-webkit-inner-spin-button {
     border-radius: 4px;
     transition: all .3s;
 }
-.sorting_item:last-child{
+
+.sorting_item:last-child {
     border: 1px solid #4daef8;
 }
-.sorting_item._active_sorted{
+
+.sorting_item._active_sorted {
     background: #1c9afa;
     color: #ffffff;
     transition: all .3s;
 }
-.sorting_item .fa-chevron-down{
+
+.sorting_item .fa-chevron-down {
     transition: tranform .6s;
 }
-.sorting_item .fa-chevron-down._active_chevron{
+
+.sorting_item .fa-chevron-down._active_chevron {
     transition: transform .6s;
     transform: rotate(180deg);
 }
+
 #sort_zag {
     font-size: 18px;
     font-weight: 600;
@@ -997,17 +1017,20 @@ input[type=range]:focus::-ms-fill-upper {
     transform: scale(1);
     transition: transform .4s;
 }
-.auth_registr_text{
+
+.auth_registr_text {
     width: 100%;
     text-align: center;
     font-size: 14px;
 }
-.small_href{
+
+.small_href {
     color: #1c9afa;
     cursor: pointer;
     padding-left: 8px;
     text-decoration: underline;
 }
+
 .popup_place._active {
     transform: scale(1);
     z-index: 500;
@@ -1125,7 +1148,8 @@ input[type=range]:focus::-ms-fill-upper {
     transform: translate(0, -35%);
     font-weight: bold;
 }
-.about_popup{
+
+.about_popup {
     width: 90%;
     display: block;
     line-height: 140%;
@@ -1133,22 +1157,27 @@ input[type=range]:focus::-ms-fill-upper {
     margin: 0 auto;
     font-size: 16px;
 }
-.flex_add{
+
+.flex_add {
     width: 100%;
     display: flex;
     align-items: center;
     margin: 8px 0;
 }
-.flex_add .fa-search{
+
+.flex_add .fa-search {
     color: #1c9afa;
 }
-.flex_add .fa-compress-arrows-alt{
+
+.flex_add .fa-compress-arrows-alt {
     color: #1c9afa;
 }
-.about_info{
+
+.about_info {
     width: 90%;
     padding-left: 15px;
 }
+
 /* Страница подписаться */
 .subscribe_item {
     width: 32%;

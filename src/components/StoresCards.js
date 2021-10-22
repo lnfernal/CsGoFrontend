@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from "react-router-dom";
 
 export const StoresCards = ({shops}) => {
     if (!shops.length) {
@@ -27,7 +28,7 @@ export const StoresCards = ({shops}) => {
                         <a className="stores_btn registr" href={shop.ref_href} target="_blank" rel="noreferrer noopener ">
                             Зарегистрироваться
                         </a>
-                        <a className="stores_btn about_site" href={`/store/${shop.id}`}>О сайте</a>
+                        <Link className="stores_btn about_site" to={`/store/${shop.id}`}>О сайте</Link>
                     </div>
                 )
             }

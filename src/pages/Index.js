@@ -1,15 +1,33 @@
-import React, {useState, useEffect, useCallback, useContext, useMemo} from 'react'
+import React, {useState, useEffect, useCallback, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import {Loader} from "../components/Loader"
 import {GunCards} from "../components/GunCards"
 import {LoaderSkins} from "../components/LoaderSkins"
 import {AuthContext} from "../context/AuthContext";
 
-let first_loaded = true;
-export const Index = () => {
-    const elasticsearch = require('elasticsearch');
 
-    const esClient = new elasticsearch.Client({host: 'http://localhost:3000/', log: 'error'});
+export const Index = () => {
+    // const elasticsearch = require('elasticsearch');
+    //
+    // const esClient = new elasticsearch.Client({host: 'http://localhost:3000/', log: 'error'});
+    const [dataskins, setDataskins] = useState([])
+    const [fetching, setFetching] = useState(false)
+    const [loadSkins, setLoadSkins] = useState(false)
+    console.log('dataskins', dataskins)
+    const shops_name = [
+        {name: 'Steam', href: 'https://steamcommunity.com/market/search?appid=730', color: '#316282'},
+        {name: 'CsGoTm', href: 'https://market.csgo.com', color: '#82c4c9'},
+        {name: 'CsGo500', href: 'https://csgo500tr.com/r/INTERNETMONEY', color: '#c32d4f'},
+        {name: 'DMarket', href: 'https://dmarket.com?ref=aD4yxOg5hp', color: '#66ca88'}
+    ]
+
+    const qualities_name = [
+        {name: "Закаленное в боях"},
+        {name: "Поношенное"},
+        {name: "После полевых испытаний"},
+        {name: "Немного поношенное"},
+        {name: "Прямо с завода"},
+    ]
 
     const [form, setForm] = useState({
         page: 1,
@@ -19,48 +37,90 @@ export const Index = () => {
         cost_end: 1000000,
         sorted_type: 1,
         raritet: 0,
-        guns: 0,
         page_count: 16,
         float_start: 0,
         float: 1,
-        type: 0,
+        item_type: 0,
         category: 0
     })
     const {token, userSubscribe} = useContext(AuthContext)
     const isAuthenticated = !!token
     const {request, loading} = useHttp()
-    const [skins, setSkins] = useState(null)
+
+
+    useEffect(() => {
+        document.addEventListener('scroll', scrollHandler)
+        return function () {
+            document.removeEventListener('scroll', scrollHandler)
+        };
+    }, [])
+    const scrollHandler = (e) => {
+        if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 150) {
+            setFetching(true)
+        }
+    }
+
+
     const changeHandler = event => {
-        setForm({...form, [event.target.name]: event.target.value})
+        setDataskins([])
+        setForm({
+            ...form,
+            [event.target.name]: !isNaN(event.target.value) ? Number(event.target.value) : event.target.value
+        })
+        // setForm({...form, page: 1})
+        return setLoadSkins(true);
     }
 
     // Сортировка
     let sorted_inputs = document.getElementsByClassName("sorting_item")
     for (let i = 0; i < sorted_inputs.length; i++) {
-        sorted_inputs[i].onclick = function () {
+        sorted_inputs[i].onkeypress = function () {
             document.getElementsByClassName("_active_sorted")[0].classList.remove("_active_sorted")
             sorted_inputs[i].classList.add("_active_sorted")
-            if (i === 0) {
-                let chevron = document.getElementById("chevron_down")
-                if (chevron.classList.contains("_active_chevron")) {
-                    chevron.classList.remove("_active_chevron");
-                } else {
-                    chevron.classList.add("_active_chevron");
-                }
-
+            let chevrons = document.getElementsByClassName('chevron');
+            if (chevrons[i].classList.contains("_active_chevron")) {
+                chevrons[i].classList.remove("_active_chevron");
+            } else {
+                chevrons[i].classList.add("_active_chevron");
             }
+            // if (i === 0) {
+            //     if (chevrons[i].classList.contains("_active_chevron")) {
+            //         setForm({...form, sorted_type: 1})
+            //
+            //     } else {
+            //         setForm({...form, sorted_type: 2})
+            //     }
+            //     setLoadSkins(true)
+            // }
+            // if (i === 1) {
+            //     if (chevrons[i].classList.contains("_active_chevron")) {
+            //         setForm({...form, sorted_type: 3})
+            //     } else {
+            //         setForm({...form, sorted_type: 4})
+            //     }
+            //     setLoadSkins(true)
+            // }
+            // if (i === 2) {
+            //     if (chevrons[i].classList.contains("_active_chevron")) {
+            //         setForm({...form, sorted_type: 5})
+            //     } else {
+            //         setForm({...form, sorted_type: 6})
+            //     }
+            //     setLoadSkins(true)
+            // }
         }
     }
     console.log("token", token, userSubscribe)
+    console.log("form", form)
 
 
-    window.addEventListener('scroll', function () {
-        let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
-        // если пользователь прокрутил достаточно далеко (< 100px до конца)
-        if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
-            form.page += 1
-        }
-    });
+    // window.addEventListener('scroll', function () {
+    //     let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
+    //     // если пользователь прокрутил достаточно далеко (< 100px до конца)
+    //     if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
+    //
+    //     }
+    // });
 
 
     const maxPrice = useCallback(async () => {
@@ -76,8 +136,9 @@ export const Index = () => {
             }
             cost.setAttribute('max', data['max_price'][0]['price'].toFixed(2))
             console.log('isAuthenticated', isAuthenticated);
-            if(!isAuthenticated) return setForm({...form, cost_end : 500})
-            return form.cost_end = data['max_price'][0]['price'].toFixed(2)
+            if (!isAuthenticated) return setForm({...form, cost_end: 500})
+            return setForm({...form, cost_end: data['max_price'][0]['price']})
+            // form.cost_end = data['max_price'][0]['price'].toFixed(2)
         } catch (e) {
         }
     }, [request])
@@ -85,7 +146,7 @@ export const Index = () => {
     const minPrice = useCallback(async () => {
         try {
             const data = await request('/api/skins/get_min_price', 'GET', null)
-            console.log(data)
+            console.log('minPrice', data)
             let cost = document.getElementById('cost')
             let cost_start = document.getElementById('cost_start')
             cost_start.onchange = function () {
@@ -100,16 +161,16 @@ export const Index = () => {
 
     const getSkins = async () => {
         try {
-            console.log('form.cost_end', form.cost_end)
             const data = await request('/api/skins/get', 'POST', {...form}, {
                 Authorization: `Bearer ${token}`
             })
-            setSkins(data)
-            console.log(first_loaded)
-            console.log(data)
-
+            console.log("Data getSkins", data)
+            setDataskins([...dataskins, ...data['skins']])
         } catch (e) {
+        } finally {
+            setFetching(false);
         }
+
     }
     const minFloat = useCallback(async () => {
         try {
@@ -131,15 +192,28 @@ export const Index = () => {
 
     useEffect(() => {
         maxPrice()
+        // setLoadSkins(true)
     }, [maxPrice])
 
     useEffect(() => {
         minPrice()
     }, [minPrice])
 
-    // При фильтрации и сортировке
+
     useEffect(() => {
-        getSkins()
+        if (fetching) {
+            getSkins()
+            setForm({...form, page: form.page + 1})
+            // setFetching(false)
+        }
+    }, [fetching])
+
+
+    useEffect(() => {
+        if (loadSkins) {
+            getSkins()
+            setLoadSkins(false)
+        }
     }, [form])
 
 
@@ -151,7 +225,7 @@ export const Index = () => {
         maxFloat()
     }, [maxFloat])
 
-    if (loading && first_loaded) {
+    if (loading && !fetching) {
         return <Loader/>
     }
 
@@ -161,7 +235,7 @@ export const Index = () => {
             {/*    <h2>Интересное</h2>*/}
             {/*</div>*/}
             <div className="flex_content">
-                <sidebar className="filters_place">
+                <div className="filters_place">
                     <h2>Фильтры</h2>
                     <h3 className="zag_for_filters">Стоимость</h3>
                     <input
@@ -223,7 +297,7 @@ export const Index = () => {
                     <select
                         className="filter_input"
                         name='id_shop'
-                        value={Number(form.id_shop)}
+                        value={form.id_shop}
                         onChange={changeHandler}
                     >
                         <option value="0">
@@ -269,11 +343,11 @@ export const Index = () => {
                         onChange={changeHandler}
                     >
                         <option value="0">Любое</option>
-                        <option value="Закаленное в боях">Закаленное в боях</option>
-                        <option value="Поношенное">Поношенное</option>
-                        <option value="После полевых испытаний">После полевых испытаний</option>
-                        <option value="Немного поношенное">Немного поношенное</option>
-                        <option value="Прямо с завода">Прямо с завода</option>
+                        <option value="1">Закаленное в боях</option>
+                        <option value="2">Поношенное</option>
+                        <option value="3">После полевых испытаний</option>
+                        <option value="4">Немного поношенное</option>
+                        <option value="5">Прямо с завода</option>
                     </select>
 
                     <h3 className="zag_for_filters">Категории</h3>
@@ -295,26 +369,26 @@ export const Index = () => {
                     <h3 className="zag_for_filters">Оружие</h3>
                     <select
                         className="filter_input"
-                        name='guns'
-                        value={form.guns}
+                        name='item_type'
+                        value={form.item_type}
                         onChange={changeHandler}
                     >
-                        <option value="1">Любой</option>
-                        <option value="2">Винтовка</option>
-                        <option value="3">Снайперская винтовка</option>
-                        <option value="4">Наклейка</option>
-                        <option value="5">Контейнер</option>
-                        <option value="6">Пистолет</option>
-                        <option value="7">Агент</option>
-                        <option value="8">Пистолет-пулемёт</option>
-                        <option value="9">Пулемёт</option>
-                        <option value="10">Дробовик</option>
-                        <option value="11">Граффити</option>
-                        <option value="12">Набор музыки</option>
-                        <option value="13">Нашивка</option>
-                        <option value="14">Подарок</option>
+                        <option value="0">Любой</option>
+                        <option value="1">Винтовка</option>
+                        <option value="2">Снайперская винтовка</option>
+                        <option value="3">Наклейка</option>
+                        <option value="4">Контейнер</option>
+                        <option value="5">Пистолет</option>
+                        <option value="6">Агент</option>
+                        <option value="7">Пистолет-пулемёт</option>
+                        <option value="8">Пулемёт</option>
+                        <option value="9">Дробовик</option>
+                        <option value="10">Граффити</option>
+                        <option value="11">Набор музыки</option>
+                        <option value="12">Нашивка</option>
+                        <option value="13">Подарок</option>
                     </select>
-                </sidebar>
+                </div>
                 <div className="card_guns_place">
                     <div className="main_search_place">
                         <div className="flex_search_place ">
@@ -323,15 +397,27 @@ export const Index = () => {
                         </div>
                     </div>
                     <div className="sorting_place">
-                        <div className="sorting_item _active_sorted">
-                            По цене <span className="fa fa-chevron-down" id="chevron_down">
+                        <div className="sorting_item _active_sorted" onKeyPress={() => {
+                            setForm({...form, sorted_type: 2})
+                            setLoadSkins(true)
+                        }}>
+                            По цене <span className="fa fa-chevron-down chevron">
                         </span>
                         </div>
-                        <div className="sorting_item">
-                            По выгоде
+                        <div className="sorting_item" onKeyPress={() => {
+                            setForm({...form, sorted_type: 3})
+                            setLoadSkins(true)
+                        }}>
+                            По выгоде <span className="fa fa-chevron-down chevron">
+
+                        </span>
                         </div>
-                        <div className="sorting_item">
-                            По float <span className="fa fa-chevron-down" id="chevron_float">
+                        <div className="sorting_item" onKeyPress={() => {
+                            setForm({...form, sorted_type: 5})
+                            setLoadSkins(true)
+                        }}>
+                            По float
+                            <span className="fa fa-chevron-down chevron">
 
                         </span>
                         </div>
@@ -339,8 +425,55 @@ export const Index = () => {
                             По стикерам
                         </div>
                     </div>
-                    {loading && skins && !first_loaded && <LoaderSkins/>}
-                    {!loading && skins && <GunCards skins={skins}/>}
+
+
+
+                    {/*{!loading && dataskins && !loadSkins && <GunCards skins={dataskins}/>}*/}
+                    {!loadSkins && dataskins && dataskins.map((skin) =>
+                        <div className="gun_card" key={skin.id}>
+                            <div className="price_difference"
+                                 style={skin.price_difference === 0 ? {display: "none"} : {display: "block"}}>
+                                {skin.price_difference}
+                            </div>
+                            <div className="price_gun">
+                                {skin.price.toFixed(2)} ₽
+                            </div>
+                            <a href={skin.href} className="href_gun" rel="noreferrer noopener" target="_blank">
+                                <div className="card_img_place">
+                                    <img src={skin.href_img} className="card_img" alt={skin.name}/>
+                                </div>
+                            </a>
+                            <ul className="data_guns">
+                                <li>
+                                    <span className="icon_item_type">🥆</span>
+                                    <span className="name_gun">{skin.name}</span>
+                                </li>
+                                <li>
+                                    <span
+                                        className="quality_gun">{skin.quality !== 0 ? qualities_name[skin.quality - 1].name : ''}</span>
+                                </li>
+                                <li>
+                                    <span className="raritet_gun">{skin.item_type}</span>
+                                </li>
+
+                                <li>
+                                    <a style={{color: shops_name[skin.id_shop - 1]['color']}}
+                                       className="shop_name"
+                                       target="_blank"
+                                       rel="noreferrer noopener"
+                                       href={shops_name[skin.id_shop - 1]['href']}
+                                    >
+                                        {shops_name[skin.id_shop - 1]['name']}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                    {loading && fetching &&
+                        <div className="preloader_text">
+
+                        </div>
+                    }
                 </div>
             </div>
         </div>

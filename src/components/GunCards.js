@@ -7,16 +7,25 @@ export const GunCards = ({skins}) => {
         {name: 'DMarket', href: 'https://dmarket.com?ref=aD4yxOg5hp', color: '#66ca88'}
     ]
 
+    const qualities_name = [
+        {name: "Закаленное в боях"},
+        {name: "Поношенное"},
+        {name: "После полевых испытаний"},
+        {name: "Немного поношенное"},
+        {name: "Прямо с завода"},
+    ]
+
     console.log('skins', skins)
-    if (!skins['skins'].length) {
+    if (!skins.length) {
         return <p className="center">Скинов по такому запросу не найдено.</p>
     }
 
     return (
         // Выводим скины
-        skins['skins'].map((skin) => {
+
+        skins.map((skin) => {
                     return (
-                        <div className="gun_card" key={skin._id}>
+                        <div className="gun_card" key={skin.id}>
                             <div className="price_difference" style={skin.price_difference === 0 ? {display: "none"} : {display: "block"}}>
                                 {skin.price_difference}
                             </div>
@@ -34,7 +43,7 @@ export const GunCards = ({skins}) => {
                                     <span className="name_gun">{skin.name}</span>
                                 </li>
                                 <li>
-                                    <span className="quality_gun">{skin.quality}</span>
+                                    <span className="quality_gun">{skin.quality !== 0 ? qualities_name[skin.quality - 1].name : ''}</span>
                                 </li>
                                 <li>
                                     <span className="raritet_gun">{skin.item_type}</span>
