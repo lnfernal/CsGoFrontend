@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useCallback, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import {Loader} from "../components/Loader"
-import {GunCards} from "../components/GunCards"
-import {LoaderSkins} from "../components/LoaderSkins"
+// import {GunCards} from "../components/GunCards"
+// import {LoaderSkins} from "../components/LoaderSkins"
 import {AuthContext} from "../context/AuthContext";
 
 
@@ -28,6 +28,28 @@ export const Index = () => {
         {name: "Немного поношенное"},
         {name: "Прямо с завода"},
     ]
+
+    const rare = [
+        {color: "#b0c3d9"}, // Ширпортёб
+        {color: "#5e98d9"}, // Промышленное
+        {color: "#4b69ff"}, // Армейское
+        {color: "#8847ff"}, // Запрещённое
+        {color: "#d32ee6"}, // Засекреченное
+        {color: "#eb4b4b"}, // Тайное
+        {color: "#b0c3d9"},
+    ]
+
+    // <option value="0">Любая</option>
+    //                         <option value="2">Ширпотрёб</option>
+    //                         <option value="3">Промышленное</option>
+    //                         <option value="4">Армейское</option>
+    //                         <option value="5">Запрещённое</option>
+    //                         <option value="6">Засекреченное</option>
+    //                         <option value="7">Тайное</option>
+    //                         <option value="8">Высшего класса</option>
+    //                         <option value="9">Экзотичного вида</option>
+    //                         <option value="10">Контрабандное</option>
+
 
     const [form, setForm] = useState({
         page: 1,
@@ -62,12 +84,12 @@ export const Index = () => {
 
 
     const changeHandler = event => {
-        setDataskins([])
         setForm({
             ...form,
             [event.target.name]: !isNaN(event.target.value) ? Number(event.target.value) : event.target.value
         })
-        // setForm({...form, page: 1})
+        form.page = 1
+        setDataskins([])
         return setLoadSkins(true);
     }
 
@@ -83,31 +105,6 @@ export const Index = () => {
             } else {
                 chevrons[i].classList.add("_active_chevron");
             }
-            // if (i === 0) {
-            //     if (chevrons[i].classList.contains("_active_chevron")) {
-            //         setForm({...form, sorted_type: 1})
-            //
-            //     } else {
-            //         setForm({...form, sorted_type: 2})
-            //     }
-            //     setLoadSkins(true)
-            // }
-            // if (i === 1) {
-            //     if (chevrons[i].classList.contains("_active_chevron")) {
-            //         setForm({...form, sorted_type: 3})
-            //     } else {
-            //         setForm({...form, sorted_type: 4})
-            //     }
-            //     setLoadSkins(true)
-            // }
-            // if (i === 2) {
-            //     if (chevrons[i].classList.contains("_active_chevron")) {
-            //         setForm({...form, sorted_type: 5})
-            //     } else {
-            //         setForm({...form, sorted_type: 6})
-            //     }
-            //     setLoadSkins(true)
-            // }
         }
     }
     console.log("token", token, userSubscribe)
@@ -138,7 +135,6 @@ export const Index = () => {
             console.log('isAuthenticated', isAuthenticated);
             if (!isAuthenticated) return setForm({...form, cost_end: 500})
             return setForm({...form, cost_end: data['max_price'][0]['price']})
-            // form.cost_end = data['max_price'][0]['price'].toFixed(2)
         } catch (e) {
         }
     }, [request])
@@ -169,6 +165,7 @@ export const Index = () => {
         } catch (e) {
         } finally {
             setFetching(false);
+            setLoadSkins(false)
         }
 
     }
@@ -192,7 +189,6 @@ export const Index = () => {
 
     useEffect(() => {
         maxPrice()
-        // setLoadSkins(true)
     }, [maxPrice])
 
     useEffect(() => {
@@ -204,17 +200,16 @@ export const Index = () => {
         if (fetching) {
             getSkins()
             setForm({...form, page: form.page + 1})
-            // setFetching(false)
         }
     }, [fetching])
 
 
     useEffect(() => {
         if (loadSkins) {
+
             getSkins()
-            setLoadSkins(false)
         }
-    }, [form])
+    }, [loadSkins, form])
 
 
     useEffect(() => {
@@ -225,7 +220,7 @@ export const Index = () => {
         maxFloat()
     }, [maxFloat])
 
-    if (loading && !fetching) {
+    if (loading && !fetching && !loadSkins) {
         return <Loader/>
     }
 
@@ -243,7 +238,7 @@ export const Index = () => {
                         name='cost_end'
                         id="cost"
                         value={Number(form.cost_end)}
-                        onMouseUp={changeHandler}
+                        onChange={changeHandler}
                     />
 
                     <div className="place_for_price_inp">
@@ -323,17 +318,16 @@ export const Index = () => {
                         value={form.raritet}
                         onChange={changeHandler}
                     >
-                        <option value="1">Любая</option>
-                        <option value="2">Базового класса</option>
-                        <option value="3">Ширпотрёб</option>
-                        <option value="4">Промышленное</option>
-                        <option value="5">Армейское</option>
-                        <option value="6">Запрещённое</option>
-                        <option value="7">Засекреченное</option>
-                        <option value="8">Тайное</option>
-                        <option value="9">Высшего класса</option>
-                        <option value="10">Экзотичного вида</option>
-                        <option value="11">Контрабандное</option>
+                        <option value="0">Любая</option>
+                        <option value="2">Ширпотрёб</option>
+                        <option value="3">Промышленное</option>
+                        <option value="4">Армейское</option>
+                        <option value="5">Запрещённое</option>
+                        <option value="6">Засекреченное</option>
+                        <option value="7">Тайное</option>
+                        <option value="8">Высшего класса</option>
+                        <option value="9">Экзотичного вида</option>
+                        <option value="10">Контрабандное</option>
                     </select>
                     <h3 className="zag_for_filters">Качество</h3>
                     <select
@@ -357,9 +351,9 @@ export const Index = () => {
                         value={form.category}
                         onChange={changeHandler}
                     >
-                        <option value="1">Все</option>
-                        <option value="2">StatTrak</option>
-                        <option value="3">Сувенир</option>
+                        <option value="0">Все</option>
+                        <option value="1">StatTrak</option>
+                        <option value="2">Сувенир</option>
                     </select>
                     <h3 className="zag_for_filters">Наклейки</h3>
                     <input type="checkbox" id="choose_flow_one"
@@ -387,6 +381,7 @@ export const Index = () => {
                         <option value="11">Набор музыки</option>
                         <option value="12">Нашивка</option>
                         <option value="13">Подарок</option>
+                         <option value="14">Нож</option>
                     </select>
                 </div>
                 <div className="card_guns_place">
@@ -397,25 +392,16 @@ export const Index = () => {
                         </div>
                     </div>
                     <div className="sorting_place">
-                        <div className="sorting_item _active_sorted" onKeyPress={() => {
-                            setForm({...form, sorted_type: 2})
-                            setLoadSkins(true)
-                        }}>
+                        <div className="sorting_item _active_sorted" >
                             По цене <span className="fa fa-chevron-down chevron">
                         </span>
                         </div>
-                        <div className="sorting_item" onKeyPress={() => {
-                            setForm({...form, sorted_type: 3})
-                            setLoadSkins(true)
-                        }}>
+                        <div className="sorting_item" >
                             По выгоде <span className="fa fa-chevron-down chevron">
 
                         </span>
                         </div>
-                        <div className="sorting_item" onKeyPress={() => {
-                            setForm({...form, sorted_type: 5})
-                            setLoadSkins(true)
-                        }}>
+                        <div className="sorting_item" >
                             По float
                             <span className="fa fa-chevron-down chevron">
 
@@ -425,19 +411,22 @@ export const Index = () => {
                             По стикерам
                         </div>
                     </div>
-
-
-
                     {/*{!loading && dataskins && !loadSkins && <GunCards skins={dataskins}/>}*/}
                     {!loadSkins && dataskins && dataskins.map((skin) =>
                         <div className="gun_card" key={skin.id}>
-                            <div className="price_difference"
-                                 style={skin.price_difference === 0 ? {display: "none"} : {display: "block"}}>
-                                {skin.price_difference}
-                            </div>
+                            {skin.price_difference === 0 ? '' :
+                                <div className="price_difference">
+                                    {skin.price_difference + '%'}
+                                </div>
+                            }
                             <div className="price_gun">
                                 {skin.price.toFixed(2)} ₽
                             </div>
+                            {skin.float === null || skin.float === 0 ? '' :
+                                <div className="float_gun">
+                                    {skin.float.toFixed(4)}
+                                </div>
+                            }
                             <a href={skin.href} className="href_gun" rel="noreferrer noopener" target="_blank">
                                 <div className="card_img_place">
                                     <img src={skin.href_img} className="card_img" alt={skin.name}/>
@@ -445,12 +434,11 @@ export const Index = () => {
                             </a>
                             <ul className="data_guns">
                                 <li>
-                                    <span className="icon_item_type">🥆</span>
                                     <span className="name_gun">{skin.name}</span>
                                 </li>
                                 <li>
                                     <span
-                                        className="quality_gun">{skin.quality !== 0 ? qualities_name[skin.quality - 1].name : ''}</span>
+                                        className="quality_gun">{skin.quality !== 0 ? qualities_name[skin.quality - 1]['name'] : ''}</span>
                                 </li>
                                 <li>
                                     <span className="raritet_gun">{skin.item_type}</span>
@@ -480,4 +468,3 @@ export const Index = () => {
     );
 
 }
-

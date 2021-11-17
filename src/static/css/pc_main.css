@@ -125,10 +125,9 @@ input[type="number"]::-webkit-inner-spin-button {
 
 @keyframes radial-pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(28, 154, 250, 100);
+        box-shadow: 0 0 0 0 rgba(28, 154, 250, 0);
         border-radius: 50%;
     }
-
     100% {
         box-shadow: 0 0 0 10px rgba(28, 154, 250, 100);
         border-radius: 50%;
@@ -715,16 +714,18 @@ input[type="number"]::-webkit-inner-spin-button {
     position: absolute;
     right: 5px;
     top: 5px;
-    width: 50px;
+    padding: 0 4px;
+    width: auto;
     border-radius: 6px;
     background: #4daef8;
-    color: #333333;
+    color: #ececec;
     display: flex;
     height: 20px;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
+    letter-spacing: 0.1em;
 }
 
 .price_gun {
@@ -735,7 +736,7 @@ input[type="number"]::-webkit-inner-spin-button {
     padding: 0 4px;
     border-radius: 6px;
     background: #4daef8;
-    color: #333333;
+    color: #ececec;
     display: flex;
     height: 20px;
     align-items: center;
@@ -748,7 +749,23 @@ input[type="number"]::-webkit-inner-spin-button {
 .price_gun .fa-ruble-sign {
     margin-left: 2px;
 }
-
+.float_gun {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: auto;
+    padding: 0 4px;
+    border-radius: 6px;
+    background: #4daef8;
+    color: #ececec;
+    display: flex;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
 .shop_name {
     font-weight: bold;
     color: #ffffff;
@@ -1005,8 +1022,8 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .auth_registr_popup {
-    width: 40%;
-    height: 60%;
+    width: 50%;
+    height: 70%;
     border-radius: 10px;
     background: #222;
     transform: scale(0);
@@ -1107,12 +1124,18 @@ input[type=range]:focus::-ms-fill-upper {
     color: #fd2020;
     transition: color .3s;
 }
-
-.auth_registr_popup .filter_input {
-    height: 40px;
+.inp_lab_reg_place{
+    height: 60px;
+    margin: 10px auto;
     display: block;
     width: 90%;
-    margin: 20px auto;
+    position: relative;
+}
+.auth_registr_popup .filter_input {
+    height: 35px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
 }
 
 .auth_registr_popup .filter_input:active {
@@ -1127,26 +1150,36 @@ input[type=range]:focus::-ms-fill-upper {
     justify-content: center;
     align-items: center;
     background: #1c9afa;
+    background-image: linear-gradient(45deg, #222 50%, transparent 50%);
+    background-position: 100%;
+    background-size: 400%;
+    transition: all .4s;
     color: #ffffff;
     font-size: 18px;
     border-radius: 4px;
     cursor: pointer;
+    border:2px solid transparent;
 }
 
+.send_btn:hover{
+	cursor:  pointer;
+	background-position: 0;
+	color: #FFF;
+	transition: all .4s;
+    border: 2px solid #1c9afa;
+}
 .label_for_inp {
-    position: absolute;
-    left: 5%;
     font-size: 16px;
-    transform: translate(0, 120%);
+    transform: scale(0);
     transition: all .5s;
     color: #c5c5c5;
-    margin: 8px 0;
+    font-weight: bold;
 }
+
 
 .label_for_inp._active {
     transition: all .5s;
-    transform: translate(0, -35%);
-    font-weight: bold;
+    transform: scale(1);
 }
 
 .about_popup {

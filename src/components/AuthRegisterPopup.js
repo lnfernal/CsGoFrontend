@@ -137,31 +137,34 @@ const Popup = ({active, setActive, page, setPage}) => {
                             <div className="about_info">Сравнить скины с разных торговых площадок</div>
                         </div>
                     </div>
+                    <div className="inp_lab_reg_place">
+                        <div className="label_for_inp">
 
-                    <div className="label_for_inp">
-
+                        </div>
+                        <input
+                            className='filter_input auth_reg_input'
+                            name='email'
+                            type='email'
+                            value={form.email}
+                            placeholder='Введите Email'
+                            onChange={changeHandler}
+                            autoComplete="off"
+                        />
                     </div>
-                    <input
-                        className='filter_input auth_reg_input'
-                        name='email'
-                        type='email'
-                        value={form.email}
-                        placeholder='Введите Email'
-                        onChange={changeHandler}
-                        autoComplete="off"
-                    />
-                    <div className="label_for_inp">
+                    <div className="inp_lab_reg_place">
+                        <div className="label_for_inp">
 
+                        </div>
+                        <input
+                            className='filter_input auth_reg_input'
+                            name='password'
+                            type='password'
+                            value={form.password}
+                            placeholder='Введите пароль'
+                            onChange={changeHandler}
+                            autoComplete="off"
+                        />
                     </div>
-                    <input
-                        className='filter_input auth_reg_input'
-                        name='password'
-                        type='password'
-                        value={form.password}
-                        placeholder='Введите пароль'
-                        onChange={changeHandler}
-                        autoComplete="off"
-                    />
 
                     <button className="send_btn" onClick={loginHandler} disabled={loading}>Войти в аккаунт</button>
 
@@ -190,39 +193,45 @@ const Popup = ({active, setActive, page, setPage}) => {
                             <div className="about_info">Сравнить скины с разных торговых площадок</div>
                         </div>
                     </div>
-                    <div className="label_for_inp">
+                    <div className="inp_lab_reg_place">
+                        <div className="label_for_inp">
 
+                        </div>
+                        <input
+                            className='filter_input auth_reg_input'
+                            name='email'
+                            type='email'
+                            value={form_reg.email}
+                            placeholder='Введите Email'
+                            onChange={changeHandler_reg}
+                        />
                     </div>
-                    <input
-                        className='filter_input auth_reg_input'
-                        name='email'
-                        type='email'
-                        value={form_reg.email}
-                        placeholder='Введите Email'
-                        onChange={changeHandler_reg}
-                    />
-                    <div className="label_for_inp">
+                    <div className="inp_lab_reg_place">
+                        <div className="label_for_inp">
 
+                        </div>
+                        <input
+                            className='filter_input auth_reg_input'
+                            name='password'
+                            type='password'
+                            value={form_reg.password}
+                            placeholder='Введите желаемый пароль'
+                            onChange={changeHandler_reg}
+                        />
                     </div>
-                    <input
-                        className='filter_input auth_reg_input'
-                        name='password'
-                        type='password'
-                        value={form_reg.password}
-                        placeholder='Введите желаемый пароль'
-                        onChange={changeHandler_reg}
-                    />
-                    <div className="label_for_inp">
+                    <div className="inp_lab_reg_place">
+                        <div className="label_for_inp">
 
+                        </div>
+                        <input
+                            className='filter_input auth_reg_input'
+                            name='rep_password'
+                            type='password'
+                            value={form_reg.rep_password}
+                            placeholder='Повторите пароль'
+                            onChange={changeHandler_reg}
+                        />
                     </div>
-                    <input
-                        className='filter_input auth_reg_input'
-                        name='rep_password'
-                        type='password'
-                        value={form_reg.rep_password}
-                        placeholder='Повторите пароль'
-                        onChange={changeHandler_reg}
-                    />
                     <button className="send_btn" onClick={registerHandler} disabled={loading}>Зарегистрироваться
                     </button>
 
@@ -237,7 +246,8 @@ const Popup = ({active, setActive, page, setPage}) => {
                     </div>
                 </div>
             </div>
-            { popupActive && <Notification setActive={setPopupActive} active={popupActive} status={status} message={message}/>}
+            {popupActive &&
+            <Notification setActive={setPopupActive} active={popupActive} status={status} message={message}/>}
         </div>
     )
 }
