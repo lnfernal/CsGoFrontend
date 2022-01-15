@@ -12,12 +12,6 @@ export const Subscribe = () => {
             <h1>Подписка</h1>
             <div className="subscribe_place">
                 <div className="subscribe_item">
-                    <h3 className="zagolovok">Тариф "Бесплатный"</h3>
-                    <div className="subscribe_text">
-                        Возможность смотреть скины в пределах 500 рублей.
-                    </div>
-                </div>
-                <div className="subscribe_item">
                     <h3 className="zagolovok">Тариф "Без ограничений"</h3>
                     <div className="subscribe_text">
                         Возможность смотреть полный каталог скинов без ограничений
@@ -27,7 +21,7 @@ export const Subscribe = () => {
                             Подписка на месяц
                         </div>
                         <div className="payment_price">
-                            250₽
+                            100₽
                         </div>
                     </div>
                     <div className="send_btn">
@@ -44,7 +38,7 @@ export const Subscribe = () => {
                             Подписка на год
                         </div>
                         <div className="payment_price">
-                            2500₽
+                            1500₽
                         </div>
                     </div>
                     <div className="send_btn">

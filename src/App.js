@@ -4,6 +4,7 @@ import {useRoutes} from './routes.js'
 import {Utilites} from "./pages/utilites";
 import {useAuth} from './hooks/auth_hook'
 import {AuthContext} from './context/AuthContext'
+
 function App() {
     const {token, login, logout, userId, userSubscribe} = useAuth()
     const isAuthenticated = !!token
@@ -13,10 +14,8 @@ function App() {
             token, login, logout, userId, userSubscribe, isAuthenticated
         }}>
             <Router>
-                <div className="container">
-                    <h1>{routes}</h1>
-                </div>
                 <Utilites/>
+                {routes}
             </Router>
         </AuthContext.Provider>
     );

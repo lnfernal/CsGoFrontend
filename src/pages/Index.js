@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useCallback, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import {Loader} from "../components/Loader"
+import {GunCard} from "../components/GunCard"
 // import {GunCards} from "../components/GunCards"
 // import {LoaderSkins} from "../components/LoaderSkins"
 import {AuthContext} from "../context/AuthContext";
+import filter from '../static/img/filter.svg'
 
 
 export const Index = () => {
@@ -13,57 +15,22 @@ export const Index = () => {
     const [dataskins, setDataskins] = useState([])
     const [fetching, setFetching] = useState(false)
     const [loadSkins, setLoadSkins] = useState(false)
-    console.log('dataskins', dataskins)
-    const shops_name = [
-        {name: 'Steam', href: 'https://steamcommunity.com/market/search?appid=730', color: '#316282'},
-        {name: 'CsGoTm', href: 'https://market.csgo.com', color: '#82c4c9'},
-        {name: 'CsGo500', href: 'https://csgo500tr.com/r/INTERNETMONEY', color: '#c32d4f'},
-        {name: 'DMarket', href: 'https://dmarket.com?ref=aD4yxOg5hp', color: '#66ca88'}
-    ]
-
-    const qualities_name = [
-        {name: "Закаленное в боях"},
-        {name: "Поношенное"},
-        {name: "После полевых испытаний"},
-        {name: "Немного поношенное"},
-        {name: "Прямо с завода"},
-    ]
-
-    const rare = [
-        {color: "#b0c3d9"}, // Ширпортёб
-        {color: "#5e98d9"}, // Промышленное
-        {color: "#4b69ff"}, // Армейское
-        {color: "#8847ff"}, // Запрещённое
-        {color: "#d32ee6"}, // Засекреченное
-        {color: "#eb4b4b"}, // Тайное
-        {color: "#b0c3d9"},
-    ]
-
-    // <option value="0">Любая</option>
-    //                         <option value="2">Ширпотрёб</option>
-    //                         <option value="3">Промышленное</option>
-    //                         <option value="4">Армейское</option>
-    //                         <option value="5">Запрещённое</option>
-    //                         <option value="6">Засекреченное</option>
-    //                         <option value="7">Тайное</option>
-    //                         <option value="8">Высшего класса</option>
-    //                         <option value="9">Экзотичного вида</option>
-    //                         <option value="10">Контрабандное</option>
-
-
+    const [searchSkins, setSearchSkins] = useState(false)
+    const [allLoading, setAllLoading] = useState(true)
+    const {text, setText} = useState("")
     const [form, setForm] = useState({
         page: 1,
         id_shop: Number(0),
         quality: 0,
         cost_start: 50,
-        cost_end: 1000000,
+        cost_end: 500,
         sorted_type: 1,
         raritet: 0,
-        page_count: 16,
+        page_count: 20,
         float_start: 0,
         float: 1,
         item_type: 0,
-        category: 0
+        category: 0,
     })
     const {token, userSubscribe} = useContext(AuthContext)
     const isAuthenticated = !!token
@@ -82,47 +49,101 @@ export const Index = () => {
         }
     }
 
-
-    const changeHandler = event => {
-        setForm({
-            ...form,
-            [event.target.name]: !isNaN(event.target.value) ? Number(event.target.value) : event.target.value
-        })
+    const searchHandler = (e) => {
+        this.text = e.target.value
         form.page = 1
         setDataskins([])
+        setSearchSkins(true)
         return setLoadSkins(true);
+    }
+
+    const changeHandler = event => {
+        setAllLoading(true)
+        setForm({
+            ...form,
+            [event.target.name]: !isNaN(event.target.value) ? Number(event.target.value) : event.target.value,
+            page: 1
+        })
+        setDataskins([])
+        setLoadSkins(true);
     }
 
     // Сортировка
     let sorted_inputs = document.getElementsByClassName("sorting_item")
     for (let i = 0; i < sorted_inputs.length; i++) {
-        sorted_inputs[i].onkeypress = function () {
+        sorted_inputs[i].onclick = function () {
             document.getElementsByClassName("_active_sorted")[0].classList.remove("_active_sorted")
             sorted_inputs[i].classList.add("_active_sorted")
             let chevrons = document.getElementsByClassName('chevron');
+            if (i === 0 && !chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setDataskins([])
+                setAllLoading(true)
+                setForm({...form, sorted_type: 2})
+                setLoadSkins(true);
+            }
+            if (i === 0 && chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 1})
+                setLoadSkins(true);
+            }
+            if (i === 1 && !chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 4})
+                setLoadSkins(true);
+            }
+            if (i === 1 && chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 3})
+                setLoadSkins(true);
+            }
+            if (i === 2 && !chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 6})
+                setLoadSkins(true);
+            }
+            if (i === 2 && chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 5})
+                setLoadSkins(true);
+            }
+            if (i === 3 && !chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 7})
+                setLoadSkins(true);
+            }
+            if (i === 3 && chevrons[i].classList.contains("_active_chevron")) {
+                form.page = 1
+                setAllLoading(true)
+                setDataskins([])
+                setForm({...form, sorted_type: 8})
+                setLoadSkins(true);
+            }
             if (chevrons[i].classList.contains("_active_chevron")) {
                 chevrons[i].classList.remove("_active_chevron");
             } else {
                 chevrons[i].classList.add("_active_chevron");
+
             }
         }
     }
-    console.log("token", token, userSubscribe)
-    console.log("form", form)
-
-
-    // window.addEventListener('scroll', function () {
-    //     let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
-    //     // если пользователь прокрутил достаточно далеко (< 100px до конца)
-    //     if (windowRelativeBottom < document.documentElement.clientHeight + 200) {
-    //
-    //     }
-    // });
-
-
     const maxPrice = useCallback(async () => {
         try {
-            const data = await request('/api/skins/get_max_price', 'GET', null)
+            const data = await request('/api/skins/get_max_price', 'GET', null, {
+                Authorization: `Bearer ${token}`
+            })
             let cost = document.getElementById('cost')
             let cost_end = document.getElementById('cost_end')
             cost.oninput = function () {
@@ -132,10 +153,10 @@ export const Index = () => {
                 form.cost_end = Number(cost_end.value)
             }
             cost.setAttribute('max', data['max_price'][0]['price'].toFixed(2))
-            console.log('isAuthenticated', isAuthenticated);
-            if (!isAuthenticated) return setForm({...form, cost_end: 500})
             return setForm({...form, cost_end: data['max_price'][0]['price']})
         } catch (e) {
+        } finally {
+            setFetching(true)
         }
     }, [request])
 
@@ -161,14 +182,29 @@ export const Index = () => {
                 Authorization: `Bearer ${token}`
             })
             console.log("Data getSkins", data)
+            if(form.page === data['pages']) setAllLoading(false)
             setDataskins([...dataskins, ...data['skins']])
         } catch (e) {
         } finally {
             setFetching(false);
-            setLoadSkins(false)
+            setLoadSkins(false);
         }
 
     }
+
+    const search = useCallback(async () => {
+        try {
+            const data = await request('/api/skins/search', 'GET', text)
+            setDataskins([...dataskins, ...data['skins']])
+        } catch (e) {
+        } finally {
+            setText("")
+            setSearchSkins(false)
+            setLoadSkins(false)
+        }
+    }, [request])
+
+
     const minFloat = useCallback(async () => {
         try {
             const data = await request('/api/skins/get_min_float', 'GET', null)
@@ -197,7 +233,7 @@ export const Index = () => {
 
 
     useEffect(() => {
-        if (fetching) {
+        if (fetching && allLoading) {
             getSkins()
             setForm({...form, page: form.page + 1})
         }
@@ -205,11 +241,11 @@ export const Index = () => {
 
 
     useEffect(() => {
-        if (loadSkins) {
-
-            getSkins()
+        if (loadSkins && allLoading) {
+            getSkins();
+            setForm({...form, page: form.page + 1})
         }
-    }, [loadSkins, form])
+    }, [loadSkins])
 
 
     useEffect(() => {
@@ -219,6 +255,14 @@ export const Index = () => {
     useEffect(() => {
         maxFloat()
     }, [maxFloat])
+
+
+    useEffect(() => {
+        if (fetching && searchSkins) {
+            search()
+        }
+    }, [search])
+
 
     if (loading && !fetching && !loadSkins) {
         return <Loader/>
@@ -268,6 +312,7 @@ export const Index = () => {
                         max={1}
                         step={0.01}
                         value={form.float}
+                        onChange={changeHandler}
                     />
                     <div className="place_for_price_inp">
                         <input className="filter_input"
@@ -310,6 +355,9 @@ export const Index = () => {
                         <option value="4">
                             DMarket
                         </option>
+                        <option value="5">
+                            CSMONEY
+                        </option>
                     </select>
                     <h3 className="zag_for_filters">Раритетность</h3>
                     <select
@@ -347,7 +395,7 @@ export const Index = () => {
                     <h3 className="zag_for_filters">Категории</h3>
                     <select
                         className="filter_input"
-                        name='categories'
+                        name='category'
                         value={form.category}
                         onChange={changeHandler}
                     >
@@ -355,11 +403,11 @@ export const Index = () => {
                         <option value="1">StatTrak</option>
                         <option value="2">Сувенир</option>
                     </select>
-                    <h3 className="zag_for_filters">Наклейки</h3>
-                    <input type="checkbox" id="choose_flow_one"
-                           className="scal_chek checkbox_for_choose_flower custom-checkbox"
-                    />
-                    <label htmlFor="choose_flow_one" className="lab_desc"/>
+                    {/*<h3 className="zag_for_filters">Наклейки</h3>*/}
+                    {/*<input type="checkbox" id="choose_flow_one"*/}
+                    {/*       className="scal_chek checkbox_for_choose_flower custom-checkbox"*/}
+                    {/*/>*/}
+                    {/*<label htmlFor="choose_flow_one" className="lab_desc"/>*/}
                     <h3 className="zag_for_filters">Оружие</h3>
                     <select
                         className="filter_input"
@@ -381,90 +429,61 @@ export const Index = () => {
                         <option value="11">Набор музыки</option>
                         <option value="12">Нашивка</option>
                         <option value="13">Подарок</option>
-                         <option value="14">Нож</option>
+                        <option value="14">Нож</option>
+                        <option value="15">Перчатки</option>
                     </select>
                 </div>
                 <div className="card_guns_place">
                     <div className="main_search_place">
                         <div className="flex_search_place ">
-                            <input type="text" id="inp_search" placeholder="Поиск по названию"
-                                   className="search_input filter_input"/>
+                            <input type="text" placeholder="Поиск по названию"
+                                   className="search_input filter_input" autoComplete="off" onMouseUp={searchHandler}/>
+                        </div>
+                    </div>
+                    <div className="filter_place" id="filter_place">
+                        <div className="filter_data">
+                            <img src={filter} className="filter_img" alt="Фильтры"/>
+                            <div>Фильтры</div>
                         </div>
                     </div>
                     <div className="sorting_place">
-                        <div className="sorting_item _active_sorted" >
+                        <div className="sorting_item _active_sorted">
                             По цене <span className="fa fa-chevron-down chevron">
                         </span>
                         </div>
-                        <div className="sorting_item" >
+                        <div className="sorting_item">
                             По выгоде <span className="fa fa-chevron-down chevron">
-
-                        </span>
-                        </div>
-                        <div className="sorting_item" >
-                            По float
-                            <span className="fa fa-chevron-down chevron">
-
                         </span>
                         </div>
                         <div className="sorting_item">
-                            По стикерам
+                            По качеству
+                            <span className="fa fa-chevron-down chevron">
+                            </span>
+                        </div>
+                        <div className="sorting_item">
+                            По раритетности
+                            <span className="fa fa-chevron-down chevron">
+                            </span>
                         </div>
                     </div>
-                    {/*{!loading && dataskins && !loadSkins && <GunCards skins={dataskins}/>}*/}
-                    {!loadSkins && dataskins && dataskins.map((skin) =>
-                        <div className="gun_card" key={skin.id}>
-                            {skin.price_difference === 0 ? '' :
-                                <div className="price_difference">
-                                    {skin.price_difference + '%'}
-                                </div>
-                            }
-                            <div className="price_gun">
-                                {skin.price.toFixed(2)} ₽
-                            </div>
-                            {skin.float === null || skin.float === 0 ? '' :
-                                <div className="float_gun">
-                                    {skin.float.toFixed(4)}
-                                </div>
-                            }
-                            <a href={skin.href} className="href_gun" rel="noreferrer noopener" target="_blank">
-                                <div className="card_img_place">
-                                    <img src={skin.href_img} className="card_img" alt={skin.name}/>
-                                </div>
-                            </a>
-                            <ul className="data_guns">
-                                <li>
-                                    <span className="name_gun">{skin.name}</span>
-                                </li>
-                                <li>
-                                    <span
-                                        className="quality_gun">{skin.quality !== 0 ? qualities_name[skin.quality - 1]['name'] : ''}</span>
-                                </li>
-                                <li>
-                                    <span className="raritet_gun">{skin.item_type}</span>
-                                </li>
+                    <div className="cards_place">
+                        {!loadSkins && !dataskins.length && !fetching && "Ничего не найдено!"}
+                        {!loadSkins && dataskins && dataskins.map((skin) =>
+                            <GunCard skin={skin} />
+                        )}
+                    </div>
+                    {loading && fetching && allLoading &&
+                    <div className="preloader_text">
 
-                                <li>
-                                    <a style={{color: shops_name[skin.id_shop - 1]['color']}}
-                                       className="shop_name"
-                                       target="_blank"
-                                       rel="noreferrer noopener"
-                                       href={shops_name[skin.id_shop - 1]['href']}
-                                    >
-                                        {shops_name[skin.id_shop - 1]['name']}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    )}
-                    {loading && fetching &&
-                        <div className="preloader_text">
+                    </div>
+                    }
+                    {loading && loadSkins && allLoading &&
+                    <div className="preloader_text">
 
-                        </div>
+                    </div>
                     }
                 </div>
             </div>
         </div>
     );
-
 }

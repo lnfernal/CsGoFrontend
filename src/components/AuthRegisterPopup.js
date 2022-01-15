@@ -3,6 +3,7 @@ import React, {useState, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import Notification from "../components/Notification";
 import {AuthContext} from '../context/AuthContext'
+import {useHistory} from "react-router-dom";
 
 
 const Popup = ({active, setActive, page, setPage}) => {
@@ -11,6 +12,7 @@ const Popup = ({active, setActive, page, setPage}) => {
     let [popupActive, setPopupActive] = useState(false)
     let [message, setMessage] = useState('')
     let [status, setStatus] = useState(0)
+    const history = useHistory()
     const [form, setForm] = useState({
         email: '',
         password: ''
@@ -50,8 +52,9 @@ const Popup = ({active, setActive, page, setPage}) => {
 
     const registerHandler = async () => {
         if (form_reg.password !== form_reg.rep_password) {
-            return <Notification status={1}
-                                 message="Пароли не совпадают"/>
+            setPopupActive(true)
+            setStatus(2)
+            return setMessage("Пароли не совпадают")
         }
         try {
             const data = await request('/api/user/registration', 'POST', {...form_reg})
@@ -59,13 +62,12 @@ const Popup = ({active, setActive, page, setPage}) => {
             if (data['status'] === 'ok') {
                 document.body.style.overflow = "auto"
                 setActive(false)
-                setStatus(2)
-            } else {
                 setStatus(1)
+            } else {
+                setStatus(2)
             }
             setMessage(data['message'])
             setPopupActive(true)
-            console.log("popupActive", popupActive)
         } catch (e) {
         }
     }
@@ -77,10 +79,11 @@ const Popup = ({active, setActive, page, setPage}) => {
             if (data['status'] === 'ok') {
                 document.body.style.overflow = "auto"
                 setActive(false)
-                setStatus(2)
-                auth.login(data.token, data.userId, data.userSubscribe)
-            } else {
                 setStatus(1)
+                auth.login(data.token, data.userId, data.userSubscribe)
+                return history.push('/index')
+            } else {
+                setStatus(2)
             }
             setMessage(data['message'])
             return setPopupActive(true)
@@ -124,7 +127,7 @@ const Popup = ({active, setActive, page, setPage}) => {
                 </div>
                 <div className={page === 1 ? 'authorization_popup _active' : 'authorization_popup'}>
                     <div className="about_popup">
-                        Trade-Helper - это лучший помощник для трейдеров на скинах.
+                        <span className="mini_logo">Trade-Helper</span> - это лучший помощник для трейдеров на скинах.
                         <br/> Здесь вы можете:
                         <div className="flex_add">
                         <span className="fa fa-search">
@@ -180,7 +183,7 @@ const Popup = ({active, setActive, page, setPage}) => {
                 </div>
                 <div className={page === 2 ? 'registration_popup _active' : 'registration_popup'}>
                     <div className="about_popup">
-                        Trade-Helper - это лучший помощник для трейдеров на скинах.
+                        <span className="mini_logo">Trade-Helper</span> - это лучший помощник для трейдеров на скинах.
                         <br/> Здесь вы можете:
                         <div className="flex_add">
                         <span className="fa fa-search">
@@ -247,7 +250,7 @@ const Popup = ({active, setActive, page, setPage}) => {
                 </div>
             </div>
             {popupActive &&
-            <Notification setActive={setPopupActive} active={popupActive} status={status} message={message}/>}
+            <Notification setActive={setPopupActive} active={popupActive} status={status} message={message} />}
         </div>
     )
 }
