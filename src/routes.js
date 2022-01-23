@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {Index} from './pages/Index'
 import {Shops} from './pages/Shops'

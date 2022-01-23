@@ -60,7 +60,7 @@ const Popup = ({active, setActive, page, setPage}) => {
             const data = await request('/api/user/registration', 'POST', {...form_reg})
             console.log("data_reg", data)
             if (data['status'] === 'ok') {
-                document.body.style.overflow = "auto"
+                document.body.classList.remove("hidden")
                 setActive(false)
                 setStatus(1)
             } else {
@@ -77,7 +77,7 @@ const Popup = ({active, setActive, page, setPage}) => {
             const data = await request('/api/user/auth', 'POST', {...form})
             console.log(data)
             if (data['status'] === 'ok') {
-                document.body.style.overflow = "auto"
+                document.body.classList.remove("hidden")
                 setActive(false)
                 setStatus(1)
                 auth.login(data.token, data.userId, data.userSubscribe)
@@ -90,11 +90,11 @@ const Popup = ({active, setActive, page, setPage}) => {
         } catch (e) {
         }
     }
-    if (active) document.body.style.overflow = "hidden"
+    if (active) document.body.classList.add("hidden")
     return (
         <div className={active ? 'popup_place _active' : 'popup_place'} onClick={() => {
             setActive(false)
-            document.body.style.overflow = "auto"
+            document.body.classList.remove("hidden")
         }}>
             <div className={active ? 'auth_registr_popup _active' : 'auth_registr_popup'}
                  onClick={e => e.stopPropagation()}>
@@ -110,7 +110,7 @@ const Popup = ({active, setActive, page, setPage}) => {
                     </div>
                     <div className="close_popup" onClick={() => {
                         setActive(false)
-                        document.body.style.overflow = "auto"
+                       document.body.classList.remove("hidden")
                     }}>
                         <span className="fa fa-times">
 

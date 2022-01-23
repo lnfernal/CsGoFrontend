@@ -12,7 +12,7 @@ export const Faq = () => {
             <h1>FAQ</h1>
             <div className="faq_list">
                 <span className="logo">Trade-Helper</span> - это лучший помощник для скин трейдеров.
-                <div>Здесь вы можете:</div>
+                <h3 className="faq_heading">Здесь вы можете:</h3>
                 <ul className="faq_ul_list">
                     <li>
                         Увидеть детальную информацию о более, чем 10000 скинах с самых популярных торговых площадок.
@@ -24,16 +24,22 @@ export const Faq = () => {
                         Воспользоваться удобным поиском.
                     </li>
                 </ul>
-                <div>Для чего нужна подписка?</div>
+                <h3 className="faq_heading">У нас нельзя:</h3>
+                <ul className="faq_ul_list">
+                    <li>
+                        Покупать, продавать и обмениваться предметами.
+                    </li>
+                </ul>
+                <h3 className="faq_heading">Для чего нужна подписка?</h3>
                 <div className="faq_data">
                     - Подписка даёт возможность пользоваться сайтом без ограничений.
                     <br/> - Пользователям, не купившим подписку, доступны к просмотру скины до 500 рублей.
                 </div>
-                Как часто происходит обновление информации?
+                <h3 className="faq_heading">Как часто происходит обновление информации?</h3>
                 <div className="faq_data">
                     - Обновление происходит ежедневно в 00:00 по Московскому времени.
                 </div>
-                Как оформить подписку?
+                <h3 className="faq_heading">Как оформить подписку?</h3>
                 <div className="faq_data">
                     <ul className="faq_ul_list">
                         <li>

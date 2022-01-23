@@ -2,8 +2,7 @@ import React, {useState, useEffect, useCallback, useContext} from 'react'
 import {useHttp} from "../hooks/http.hook"
 import {Loader} from "../components/Loader"
 import {GunCard} from "../components/GunCard"
-// import {GunCards} from "../components/GunCards"
-// import {LoaderSkins} from "../components/LoaderSkins"
+import {ArrowForTopScroll} from "../components/ArrowForTopScroll"
 import {AuthContext} from "../context/AuthContext";
 import filter from '../static/img/filter.svg'
 
@@ -17,10 +16,11 @@ export const Index = () => {
     const [loadSkins, setLoadSkins] = useState(false)
     const [searchSkins, setSearchSkins] = useState(false)
     const [allLoading, setAllLoading] = useState(true)
+    const [arrowActive, setArrowActive] = useState(false)
     const {text, setText} = useState("")
     const [form, setForm] = useState({
         page: 1,
-        id_shop: Number(0),
+        id_shop: 0,
         quality: 0,
         cost_start: 50,
         cost_end: 500,
@@ -47,6 +47,12 @@ export const Index = () => {
         if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 150) {
             setFetching(true)
         }
+        if (e.target.documentElement.scrollTop > window.innerHeight){
+            setArrowActive(true)
+        }
+        if (e.target.documentElement.scrollTop < window.innerHeight){
+            setArrowActive(false)
+        }
     }
 
     const searchHandler = (e) => {
@@ -68,13 +74,22 @@ export const Index = () => {
         setLoadSkins(true);
     }
 
+    const openFilter = () => {
+        const filters_place = document.getElementsByClassName("filters_place")[0];
+        filters_place.classList.toggle("_active");
+        document.body.classList.toggle("hidden");
+    }
+
     // Сортировка
     let sorted_inputs = document.getElementsByClassName("sorting_item")
     for (let i = 0; i < sorted_inputs.length; i++) {
         sorted_inputs[i].onclick = function () {
+
             document.getElementsByClassName("_active_sorted")[0].classList.remove("_active_sorted")
+            // document.getElementsByClassName("_active_chevron")[0].classList.remove("_active_chevron")
             sorted_inputs[i].classList.add("_active_sorted")
             let chevrons = document.getElementsByClassName('chevron');
+
             if (i === 0 && !chevrons[i].classList.contains("_active_chevron")) {
                 form.page = 1
                 setDataskins([])
@@ -135,7 +150,6 @@ export const Index = () => {
                 chevrons[i].classList.remove("_active_chevron");
             } else {
                 chevrons[i].classList.add("_active_chevron");
-
             }
         }
     }
@@ -208,7 +222,6 @@ export const Index = () => {
     const minFloat = useCallback(async () => {
         try {
             const data = await request('/api/skins/get_min_float', 'GET', null)
-
             console.log(data)
         } catch (e) {
         }
@@ -358,6 +371,12 @@ export const Index = () => {
                         <option value="5">
                             CSMONEY
                         </option>
+                        <option value="6">
+                            SKINBARON
+                        </option>
+                        <option value="7">
+                            CS.deals
+                        </option>
                     </select>
                     <h3 className="zag_for_filters">Раритетность</h3>
                     <select
@@ -432,6 +451,9 @@ export const Index = () => {
                         <option value="14">Нож</option>
                         <option value="15">Перчатки</option>
                     </select>
+                    <div className="send_btn" onClick={openFilter}>
+                        Поиск
+                    </div>
                 </div>
                 <div className="card_guns_place">
                     <div className="main_search_place">
@@ -440,12 +462,13 @@ export const Index = () => {
                                    className="search_input filter_input" autoComplete="off" onMouseUp={searchHandler}/>
                         </div>
                     </div>
-                    <div className="filter_place" id="filter_place">
-                        <div className="filter_data">
+                    <div className="filter_place">
+                        <div className="filter_data" onClick={openFilter}>
                             <img src={filter} className="filter_img" alt="Фильтры"/>
                             <div>Фильтры</div>
                         </div>
                     </div>
+
                     <div className="sorting_place">
                         <div className="sorting_item _active_sorted">
                             По цене <span className="fa fa-chevron-down chevron">
@@ -484,6 +507,9 @@ export const Index = () => {
                     }
                 </div>
             </div>
+            {arrowActive &&
+                <ArrowForTopScroll/>
+            }
         </div>
     );
 }

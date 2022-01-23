@@ -14,27 +14,36 @@ export const Utilites = () => {
         auth.logout()
         history.push('/index')
     }
-    const mobileMenu = () => {
-        const mobile_nav = document.getElementsByClassName("computer_menu")[0];
-        const mobile_menu = document.getElementById("mobile_menu");
-        mobile_menu.classList.toggle("_active");
-        mobile_nav.classList.toggle("_active");
-        const links = document.getElementsByClassName("nav_link");
-        for (let link of links) {
-            link.onclick = function () {
-                mobile_menu.classList.remove("_active");
-                mobile_nav.classList.remove("_active");
-            }
+    const mobile_nav = document.getElementsByClassName("computer_menu")[0];
+    const mobile_menu = document.getElementById("mobile_menu");
+    const links = document.getElementsByClassName("nav_link");
+    for (let link of links) {
+        link.onclick = () => {
+            mobile_menu.classList.remove("_active");
+            mobile_nav.classList.remove("_active");
+            document.body.classList.remove("hidden");
         }
+    }
+    const mobileMenu = () => {
+        mobile_menu.classList.toggle("_active");
+        document.body.classList.toggle("hidden");
+        mobile_nav.classList.toggle("_active");
+    }
+    const openAuthRegistr = (page) => {
+        setPage(page)
+        setPopupActive(true)
+        mobile_menu.classList.remove("_active");
+        document.body.classList.remove("hidden");
+        mobile_nav.classList.remove("_active");
     }
     if (!auth.isAuthenticated) {
         return (
             <header className="header">
                 <div className="container_header">
                     <div className="header_place">
-                        <a className="logo" href="/index">
+                        <NavLink className="logo" to="/index">
                             Trade-Helper
-                        </a>
+                        </NavLink>
                         <div className="computer_menu">
                             <nav className="nav">
                                 <NavLink to="/index" className="nav_link">
@@ -100,18 +109,16 @@ export const Utilites = () => {
                             {/*        </div>*/}
                             {/*    </div>*/}
                             <div className="right_header_part">
-                                <div className="nav-link" onClick={() => {
-                                    setPage(1)
-                                    setPopupActive(true)
+                                <div className="nav-link" onClick={()=> {
+                                    openAuthRegistr(1)
                                 }}>
                                     <div className="nav_item">
                                         Войти
                                     </div>
                                 </div>
 
-                                <div className="nav-link" onClick={() => {
-                                    setPage(2)
-                                    setPopupActive(true)
+                                <div className="nav-link" onClick={()=> {
+                                    openAuthRegistr(2)
                                 }}>
                                     <div className="nav_item">
                                         Регистрация
@@ -148,9 +155,9 @@ export const Utilites = () => {
             <div className="container_header">
                 <div className="header_place">
                     <div className="logo_place">
-                        <a className="logo" href="/index">
+                        <NavLink className="logo" to="/index">
                             Trade-Helper
-                        </a>
+                        </NavLink>
                     </div>
                     <div className="computer_menu">
                         <nav className="nav">
@@ -219,7 +226,11 @@ export const Utilites = () => {
                         {/*    </div>*/}
                         {/*</div>*/}
                         <div className="right_header_part">
-                            <NavLink to="/cabinet" className="nav_link">
+                            <NavLink to="/cabinet" className="nav_link" onClick={() => {
+                                mobile_menu.classList.remove("_active")
+                                mobile_nav.classList.remove("_active")
+                                document.body.classList.remove("hidden")
+                            }}>
                                 <div className="nav_item">
                                 <span className="fas fa-user nav_item_icon">
                                 </span>
@@ -231,19 +242,19 @@ export const Utilites = () => {
                         </span>
                             </a>
                         </div>
-                        <div className="mobile_menu_place" id="mobile_menu"
-                             onClick={mobileMenu}
-                        >
+                    </div>
+                    <div className="mobile_menu_place" id="mobile_menu"
+                         onClick={mobileMenu}
+                    >
+                            <span>
+
+                            </span>
                         <span>
 
-                        </span>
-                            <span>
+                            </span>
+                        <span>
 
-                        </span>
-                            <span>
-
-                        </span>
-                        </div>
+                            </span>
                     </div>
                 </div>
             </div>
