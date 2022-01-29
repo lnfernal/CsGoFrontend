@@ -1,6 +1,6 @@
 import React from 'react'
 import skin_model_alt from '../static/img/skin_model_alt.png'
-
+import {Stickers} from './Stickers'
 export const GunCard = ({skin}) => {
     return (
         // Выводим скин
@@ -26,6 +26,9 @@ export const GunCard = ({skin}) => {
             >
                 <div className="card_img_place">
                     <img src={skin.href_img} className="card_img" alt={skin.name}/>
+                    {skin.hasOwnProperty("stickers") && skin.stickers.length && skin.stickers.map((sticker) =>
+                        <Stickers skin={skin} sticker={sticker}/>
+                    )}
                 </div>
             </a>
             <ul className="data_guns">
@@ -37,6 +40,7 @@ export const GunCard = ({skin}) => {
                         style={skin.hasOwnProperty("rare_color") ? {color: skin.rare_color} : {color: "#FFF"}}
                     >
                         {skin.name}
+                        {skin.hasOwnProperty('stickers') && skin.id_shop === 3 && " (со стикерами)"}
                     </a>
                 </li>
                 {skin.hasOwnProperty("qualities_name") &&
@@ -55,7 +59,6 @@ export const GunCard = ({skin}) => {
                         href={skin.shop.href}
                     >
                         {skin.shop.name}
-                        {skin.hasOwnProperty('stickers') && "Есть стикосы"}
                     </a>
                 </li>
             </ul>

@@ -88,6 +88,8 @@ const Popup = ({active, setActive, page, setPage}) => {
             setMessage(data['message'])
             return setPopupActive(true)
         } catch (e) {
+            setStatus(2)
+            setMessage(e)
         }
     }
     if (active) document.body.classList.add("hidden")

@@ -845,7 +845,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .gun_card {
     width: 23.5%;
-    height: 230px;
+    height: 250px;
     border-radius: 8px;
     margin: 5px;
     box-shadow: 2px 2px 2px 2px #111;
@@ -870,7 +870,7 @@ input[type="number"]::-webkit-inner-spin-button {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 40%;
+    height: 50%;
     box-shadow: 5px 0 5px #111;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
@@ -883,7 +883,32 @@ input[type="number"]::-webkit-inner-spin-button {
     height: auto;
     max-height: 100%;
 }
-
+.sticker_img_place{
+    position: absolute;
+    right: 5px;
+    width: 50px;
+    height: 50px;
+    top: 20px;
+}
+.sticker_img_place:first-child{
+    top: 20px;
+}
+.sticker_img_place:nth-child(2n){
+    top: 70px;
+}
+.sticker_img_place:nth-child(3n){
+    top: 20px;
+    left: 5px;
+}
+.sticker_img_place:nth-child(4n){
+    top: 70px;
+    left: 5px;
+}
+.sticker_img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 .filter_input {
     background: #333;
     border: 2px solid #444;
@@ -954,7 +979,7 @@ input[type="number"]::-webkit-inner-spin-button {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    height: 60%;
+    height: 50%;
 }
 
 /*.data_guns li {*/
@@ -1049,6 +1074,7 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-bottom: 5px;
     border-bottom: 0;
     box-shadow: 0 0 0 #ffffff;
+    height: 40%;
 }
 
 .stores_item:last-child {
