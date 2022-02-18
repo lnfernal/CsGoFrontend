@@ -17,6 +17,7 @@ export const Index = () => {
     const [searchSkins, setSearchSkins] = useState(false)
     const [allLoading, setAllLoading] = useState(true)
     const [arrowActive, setArrowActive] = useState(false)
+    const [shops, setShops] = useState([])
     const {text, setText} = useState("")
     const [form, setForm] = useState({
         page: 1,
@@ -47,16 +48,15 @@ export const Index = () => {
         if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 150) {
             setFetching(true)
         }
-        if (e.target.documentElement.scrollTop > window.innerHeight){
+        if (e.target.documentElement.scrollTop > window.innerHeight) {
             setArrowActive(true)
         }
-        if (e.target.documentElement.scrollTop < window.innerHeight){
+        if (e.target.documentElement.scrollTop < window.innerHeight) {
             setArrowActive(false)
         }
     }
 
     const searchHandler = (e) => {
-        this.text = e.target.value
         form.page = 1
         setDataskins([])
         setSearchSkins(true)
@@ -64,14 +64,16 @@ export const Index = () => {
     }
 
     const changeHandler = event => {
-        setAllLoading(true)
         setForm({
             ...form,
             [event.target.name]: !isNaN(event.target.value) ? Number(event.target.value) : event.target.value,
             page: 1
         })
-        setDataskins([])
-        setLoadSkins(true);
+        setTimeout(() => {
+            setAllLoading(true)
+            setDataskins([])
+            setLoadSkins(true);
+        }, 1000)
     }
 
     const openFilter = () => {
@@ -196,14 +198,13 @@ export const Index = () => {
                 Authorization: `Bearer ${token}`
             })
             console.log("Data getSkins", data)
-            if(form.page === data['pages']) setAllLoading(false)
+            if (form.page === data['pages']) setAllLoading(false)
             setDataskins([...dataskins, ...data['skins']])
         } catch (e) {
         } finally {
             setFetching(false);
             setLoadSkins(false);
         }
-
     }
 
     const search = useCallback(async () => {
@@ -211,6 +212,7 @@ export const Index = () => {
             const data = await request('/api/skins/search', 'GET', text)
             setDataskins([...dataskins, ...data['skins']])
         } catch (e) {
+            console.log(e)
         } finally {
             setText("")
             setSearchSkins(false)
@@ -236,43 +238,58 @@ export const Index = () => {
         }
     }, [request])
 
-    useEffect(() => {
-        maxPrice()
-    }, [maxPrice])
+    const getShops = useCallback(async () => {
+        try {
+            const data = await request(`/api/get/shops`, 'GET', null)
+            setShops(data['stores'])
+            console.log('shops', shops)
+        } catch (e) {}
+    }, [request])
+
 
     useEffect(() => {
-        minPrice()
+        getShops()
+    }, [getShops])
+
+
+
+    useEffect(async () => {
+        await maxPrice()
+    }, [maxPrice])
+
+    useEffect(async () => {
+        await minPrice()
     }, [minPrice])
 
 
-    useEffect(() => {
+    useEffect(async () => {
         if (fetching && allLoading) {
-            getSkins()
+            await getSkins()
             setForm({...form, page: form.page + 1})
         }
     }, [fetching])
 
 
-    useEffect(() => {
+    useEffect(async () => {
         if (loadSkins && allLoading) {
-            getSkins();
+            await getSkins();
             setForm({...form, page: form.page + 1})
         }
     }, [loadSkins])
 
 
-    useEffect(() => {
-        minFloat()
+    useEffect(async () => {
+        await minFloat()
     }, [minFloat])
 
-    useEffect(() => {
-        maxFloat()
+    useEffect(async () => {
+        await maxFloat()
     }, [maxFloat])
 
 
-    useEffect(() => {
+    useEffect(async () => {
         if (fetching && searchSkins) {
-            search()
+            await search()
         }
     }, [search])
 
@@ -333,7 +350,7 @@ export const Index = () => {
                                id='float_start'
                                type="number"
                                name="float_start"
-                               value={Number(form.float_start)}
+                               value={form.float_start}
                                onChange={changeHandler}
                         />
                         <input
@@ -341,8 +358,8 @@ export const Index = () => {
                             placeholder="До"
                             type="number"
                             id='float_end'
-                            value={Number(form.float)}
-                            name="float_end"
+                            value={form.float}
+                            name="float"
                             onChange={changeHandler}
                         />
                     </div>
@@ -356,27 +373,11 @@ export const Index = () => {
                         <option value="0">
                             Не выбрано
                         </option>
-                        <option value="1">
-                            Steam
+                        {shops && shops.length && shops.map(shop => {
+                        <option value={shop.id}>
+                            {shop.name}
                         </option>
-                        <option value="2">
-                            CsGoTM
-                        </option>
-                        <option value="3">
-                            CsGo500
-                        </option>
-                        <option value="4">
-                            DMarket
-                        </option>
-                        <option value="5">
-                            CSMONEY
-                        </option>
-                        <option value="6">
-                            SKINBARON
-                        </option>
-                        <option value="7">
-                            CS.deals
-                        </option>
+                        })}
                     </select>
                     <h3 className="zag_for_filters">Раритетность</h3>
                     <select
@@ -491,19 +492,19 @@ export const Index = () => {
                     </div>
                     <div className="cards_place">
                         {!loadSkins && !dataskins.length && !fetching && "Ничего не найдено!"}
-                        {!loadSkins && dataskins && dataskins.map((skin) =>
-                            <GunCard skin={skin} />
+                        {!loadSkins && dataskins && dataskins.map((skin, i) =>
+                            <GunCard skin={skin} key={i}/>
                         )}
                     </div>
                     {loading && fetching && allLoading &&
-                    <div className="preloader_text">
+                        <div className="preloader_text">
 
-                    </div>
+                        </div>
                     }
                     {loading && loadSkins && allLoading &&
-                    <div className="preloader_text">
+                        <div className="preloader_text">
 
-                    </div>
+                        </div>
                     }
                 </div>
             </div>

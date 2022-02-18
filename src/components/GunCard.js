@@ -2,9 +2,18 @@ import React from 'react'
 import skin_model_alt from '../static/img/skin_model_alt.png'
 import {Stickers} from './Stickers'
 export const GunCard = ({skin}) => {
+    const englishQualities = [
+        '',
+        'bs',
+        'ww',
+        'ft',
+        'mw',
+        'fn'
+    ]
+
     return (
         // Выводим скин
-        <div className="gun_card" key={skin.id}>
+        <div className="gun_card">
             {skin.hasOwnProperty("price_difference") &&
                 <div className="price_difference">
                     {skin.price_difference + '%'}
@@ -13,11 +22,7 @@ export const GunCard = ({skin}) => {
             <div className="price_gun">
                 {skin.price.toFixed(2)} ₽
             </div>
-            {skin.hasOwnProperty("float") &&
-                <div className="float_gun">
-                    {skin.float.toFixed(4)}
-                </div>
-            }
+
             <a
                 href={skin.href}
                 className="href_gun"
@@ -48,6 +53,7 @@ export const GunCard = ({skin}) => {
                         <span
                             className="quality_gun">{skin.qualities_name}
                         </span>
+                        {skin.hasOwnProperty("float") && " / " + skin.float.toFixed(4)}
                     </li>
                 }
                 <li>
@@ -62,6 +68,24 @@ export const GunCard = ({skin}) => {
                     </a>
                 </li>
             </ul>
+            <div className="steam_data">
+                <a
+                    href={"https://steamcommunity.com/market/search?appid=730&q=" + skin.name + " " + skin.qualities_name}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                >
+                    <img src="https://steamcommunity.com/favicon.ico" alt="steam" />
+                </a>
+            </div>
+            <div className="csmoney_data">
+                <a
+                    href={"https://cs.money/ru/csgo/store/?search=" + skin.name + " " + englishQualities[skin.quality]}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                >
+                    <img src="https://cs.money/img/favicon.png" alt="CSMONEY" />
+                </a>
+            </div>
         </div>
     )
 }

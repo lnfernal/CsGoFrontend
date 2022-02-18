@@ -19,7 +19,11 @@ export const StoresCards = ({shops}) => {
                         <div className="razdelitel">
 
                         </div>
-                        <a className="stores_name_stores" href={shop.ref_href}>
+                        <a className="stores_name_stores"
+                           target="_blank"
+                           rel="noreferrer noopener"
+                           href={shop.ref_href}
+                        >
                             {shop.name}
                         </a>
                         <div className="razdelitel">

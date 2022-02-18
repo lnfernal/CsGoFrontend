@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 
 export const StoreCard = ({shop}) => {
 
@@ -11,12 +11,9 @@ export const StoreCard = ({shop}) => {
                 <h1 className="shop_name">
                     {shop['store'][0].name}
                 </h1>
-                <div className="shop_preview">
-                    {shop['store'][0].about_site}
-                </div>
-                <div className="shop_info">
-                    {shop['store'][0].about_market}
-                </div>
+                <div className="shop_info">{shop['store'][0].about_market}</div>
+                <div className="shop_preview" dangerouslySetInnerHTML={{ __html: shop['store'][0].about_site} } />
             </div>
-        </div>)
+        </div>
+    )
 }

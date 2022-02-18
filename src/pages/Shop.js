@@ -10,7 +10,6 @@ export const Shop = () => {
     const getStore = useCallback(async () => {
         try {
             const shop = await request(`/api/get/shop/${storeId}`, 'GET', null)
-            console.log('Shop', shop)
             setStore(shop)
         } catch (e) {
         }
