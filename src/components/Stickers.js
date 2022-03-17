@@ -1,11 +1,18 @@
 import React from 'react'
 
 
-export const Stickers = ({skin, sticker = {}}) => {
+export const Stickers = ({sticker = {}}) => {
+    // tippy('.sticker_img_place', {
+    //     placement: 'left',
+    //     animation: 'scale',
+    //     arrows: true,
+    //     size: 'small',
+    //     distance: 30
+    // });
     return (
-        <div className="sticker_img_place" key={`sticker-${skin._id}`}>
-            {sticker && sticker.hasOwnProperty("image") &&
-                <img
+        <div className="sticker_img_place">
+        {sticker && sticker.hasOwnProperty("image") &&
+            <img
                     src={sticker.image}
                     alt={sticker.name}
                     className="sticker_img"

@@ -21,9 +21,7 @@ export const Shops = () => {
     }, [getShops])
 
 
-   if (loading) {
-        return <Loader/>
-    }
+    if (loading) return <Loader/>
     return (
         <div className='container'>
             <h1>Магазины</h1>

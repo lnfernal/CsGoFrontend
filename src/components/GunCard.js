@@ -1,5 +1,4 @@
 import React from 'react'
-import skin_model_alt from '../static/img/skin_model_alt.png'
 import {Stickers} from './Stickers'
 export const GunCard = ({skin}) => {
     const englishQualities = [
@@ -32,7 +31,7 @@ export const GunCard = ({skin}) => {
                 <div className="card_img_place">
                     <img src={skin.href_img} className="card_img" alt={skin.name}/>
                     {skin.hasOwnProperty("stickers") && skin.stickers.length && skin.stickers.map((sticker) =>
-                        <Stickers skin={skin} sticker={sticker}/>
+                        <Stickers sticker={sticker} key={`sticker-${skin._id}`}/>
                     )}
                 </div>
             </a>

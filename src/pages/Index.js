@@ -241,14 +241,15 @@ export const Index = () => {
     const getShops = useCallback(async () => {
         try {
             const data = await request(`/api/get/shops`, 'GET', null)
+
             setShops(data['stores'])
             console.log('shops', shops)
         } catch (e) {}
     }, [request])
 
 
-    useEffect(() => {
-        getShops()
+    useEffect(async () => {
+        if(!loading) await getShops()
     }, [getShops])
 
 
@@ -314,7 +315,6 @@ export const Index = () => {
                         value={Number(form.cost_end)}
                         onChange={changeHandler}
                     />
-
                     <div className="place_for_price_inp">
                         <input className="filter_input"
                                placeholder="От"
@@ -374,10 +374,12 @@ export const Index = () => {
                             Не выбрано
                         </option>
                         {shops && shops.length && shops.map(shop => {
-                        <option value={shop.id}>
-                            {shop.name}
-                        </option>
-                        })}
+                            return(
+                                <option value={shop.id}>
+                                    {shop.name}
+                                </option>
+                            )})
+                        }
                     </select>
                     <h3 className="zag_for_filters">Раритетность</h3>
                     <select
