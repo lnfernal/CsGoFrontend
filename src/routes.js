@@ -29,7 +29,7 @@ export const useRoutes = isAuthenticated => {
                 <Route path='/cabinet' exact>
                     <Cabinet/>
                 </Route>
-                <Redirect to="/"/>
+                <Redirect to="/index"/>
             </Switch>
         )
     }

@@ -9,6 +9,7 @@ export const Stickers = ({sticker = {}}) => {
     //     size: 'small',
     //     distance: 30
     // });
+
     return (
         <div className="sticker_img_place">
         {sticker && sticker.hasOwnProperty("image") &&
